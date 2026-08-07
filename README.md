@@ -1,12 +1,19 @@
-# PEO Order AI Validation Prototype
+# PEO Order AI Validation Review
 
-订单 AI 分析校验页面原型（按列聚合方案）。
+English prototype for PEO/Walmart booking AI validation workflow.
 
-- 左侧：异常字段按列聚合校验、批量接受 AI / 恢复原值
-- 右侧：对比版 Excel 预览
-- 底部悬浮操作栏：下载对比版 / 导出最终 Excel
+## Features
 
-## Preview
+- **V1** — Column aggregation: flagged fields grouped by column with per-row confirm, batch accept AI, and restore original
+- **V2** — Mandatory grid: full Walmart mandatory columns with diff color legend and inline editing
+- **Update order** — Modal preview of final Excel with orange highlight for changed values
+- Bottom action bar: download diff Excel, export final Excel, update order
+
+## Live
 
 - GitHub Pages: https://lyonliqima.github.io/peo-order-ai-review/
 - Vercel: https://qima-pm-agent.vercel.app
+
+## Sample order
+
+Q2600928854 (Walmart booking format)

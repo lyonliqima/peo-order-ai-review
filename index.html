@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>订单 AI 分析校验 · Q2600928854</title>
+  <title>Order AI Validation Review · Q2600928854</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
-      font-family: Inter, "Noto Sans SC", sans-serif;
+      font-family: Inter, sans-serif;
       font-size: 14px;
       line-height: 1.5;
       color: #191919;
@@ -34,7 +34,7 @@
     }
     .maisa-split-pane { min-width: 0; }
     .maisa-split-pane-left {
-      flex: 0 0 52%;
+      flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
@@ -46,38 +46,6 @@
       min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
-    }
-    .maisa-split-pane-right {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      background: #fff;
-      overflow: hidden;
-    }
-    .excel-preview-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      border-bottom: 1px solid #dde1e6;
-      background: #f7f8fb;
-    }
-    .excel-preview-head h2 {
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .excel-preview-head p {
-      margin-top: 2px;
-      font-size: 11px;
-      color: #737373;
-    }
-    .excel-preview-body {
-      flex: 1;
-      min-height: 0;
-      overflow: auto;
-      padding: 12px;
-      background: #fff;
     }
     .legend {
       display: flex;
@@ -99,6 +67,7 @@
       border: 1px solid rgba(0,0,0,.08);
     }
     .legend-swatch.ok { background: #eaf6f2; }
+    .legend-swatch.changed { background: #fcf2e6; border-color: #fbbf24; }
     .legend-swatch.diff { background: #fdefef; }
     .legend-swatch.ai { background: #eef3ff; }
     .legend-swatch.miss { background: #f3f4f6; }
@@ -124,37 +93,15 @@
     }
     .excel-mock td.ok { background: #eaf6f2; }
     .excel-mock td.diff { background: #fdefef; color: #9e141b; font-weight: 600; }
+    .excel-mock td.changed {
+      background: #fcf2e6;
+      color: #b45309;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px #fbbf24;
+    }
     .excel-mock td.ai { background: #eef3ff; color: #1d4ed8; }
     .excel-mock td.miss { background: #f3f4f6; color: #737373; }
     .excel-mock .row-label { background: #fafafb; color: #6a7282; font-weight: 600; }
-
-    .maisa-split-divider {
-      position: relative;
-      width: 6px;
-      flex: 0 0 6px;
-      cursor: col-resize;
-      background-color: #e5e8ef;
-      border-left: 1px solid #d6dae4;
-      border-right: 1px solid #d6dae4;
-      z-index: 5;
-      touch-action: none;
-    }
-    .maisa-split-divider:hover,
-    .maisa-split-layout.is-resizing .maisa-split-divider { background-color: #c9cfdb; }
-    .maisa-split-divider::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 2px;
-      height: 28px;
-      border-radius: 2px;
-      background-color: #9ca3b2;
-      transform: translate(-50%, -50%);
-    }
-    .maisa-split-layout.is-resizing { cursor: col-resize; user-select: none; }
-    .maisa-split-layout.is-resizing .excel-preview-body,
-    .maisa-split-layout.is-resizing .maisa-left-scroll { pointer-events: none; }
 
     .maisa-page-container { margin: 20px 15px 24px; }
 
@@ -468,6 +415,86 @@
     }
     .action-bar p { font-size: 12px; color: #737373; max-width: 520px; }
 
+    .excel-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .excel-modal.is-open { display: flex; }
+    .excel-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+    }
+    .excel-modal__dialog {
+      position: relative;
+      width: min(920px, 100%);
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+    }
+    .excel-modal__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #dde1e6;
+      background: #f7f8fb;
+    }
+    .excel-modal__head h2 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .excel-modal__head p {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #737373;
+    }
+    .excel-modal__close {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      color: #737373;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .excel-modal__close:hover { background: #f7f8fb; color: #191919; }
+    .excel-modal__body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 16px 20px;
+    }
+    .excel-modal__foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 20px;
+      border-top: 1px solid #dde1e6;
+      background: #fff;
+    }
+    .excel-modal__note {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #f3faf7;
+      border: 1px solid #c5e8d8;
+      font-size: 12px;
+      color: #006648;
+    }
+
     .review-result {
       display: inline-flex;
       margin-top: 4px;
@@ -480,6 +507,153 @@
       background: #fff;
     }
 
+    .review-view.is-hidden { display: none; }
+
+    .version-switch {
+      position: fixed;
+      right: 20px;
+      bottom: 72px;
+      z-index: 90;
+      display: flex;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+      background: #fff;
+      border: 1px solid #dde1e6;
+      overflow: hidden;
+    }
+    .version-switch__btn {
+      padding: 8px 16px;
+      border: none;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      color: #737373;
+    }
+    .version-switch__btn:hover { background: #f7f8fb; }
+    .version-switch__btn.active {
+      background: #155DFB;
+      color: #fff;
+    }
+
+    .v2-panel { margin-bottom: 15px; }
+    .v2-legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      font-size: 11px;
+      color: #474747;
+    }
+    .v2-legend__title {
+      grid-column: 1 / -1;
+      font-size: 12px;
+      font-weight: 700;
+      color: #191919;
+      margin-bottom: 4px;
+    }
+    .v2-legend__item { display: flex; align-items: flex-start; gap: 8px; }
+    .v2-legend__swatch {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,.08);
+      margin-top: 1px;
+    }
+    .booking-grid-wrap {
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      overflow: auto;
+    }
+    .booking-grid {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      table-layout: auto;
+      min-width: 1100px;
+    }
+    .booking-grid th,
+    .booking-grid td {
+      border: 1px solid #dde1e6;
+      padding: 6px 8px;
+      vertical-align: top;
+      min-width: 88px;
+    }
+    .booking-grid thead th {
+      background: #f3f4f8;
+      color: #474747;
+      font-weight: 600;
+      text-align: left;
+      line-height: 1.35;
+    }
+    .booking-grid .th-sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      color: #737373;
+    }
+    .booking-grid .mandatory-head {
+      background: #fafafb;
+    }
+    .mandatory-mark {
+      display: inline-block;
+      margin-right: 4px;
+      padding: 0 5px;
+      border-radius: 2px;
+      background: #e4002b;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 16px;
+    }
+    .booking-grid .row-label {
+      background: #fafafb;
+      color: #6a7282;
+      font-weight: 600;
+      min-width: 140px;
+      white-space: nowrap;
+    }
+    .mandatory-cell { position: relative; }
+    .mandatory-cell.cell-ok { background: #eaf6f2; }
+    .mandatory-cell.cell-conflict { background: #fdefef; }
+    .mandatory-cell.cell-ai { background: #eef3ff; }
+    .mandatory-cell.cell-miss { background: #f3f4f6; }
+    .mandatory-cell.cell-default { background: #fffbeb; }
+    .mandatory-cell.cell-mandatory-warn { background: #ffedd5; }
+    .cell-stack {
+      margin-bottom: 4px;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+    .stack-line { display: block; }
+    .stack-supplier { color: #191919; }
+    .stack-ai { color: #155DFB; font-weight: 600; }
+    .stack-forecast { color: #00a876; font-weight: 600; }
+    .stack-miss { color: #9ca3af; }
+    .mandatory-input {
+      width: 100%;
+      min-width: 72px;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 3px;
+      padding: 4px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255,255,255,.85);
+    }
+    .mandatory-input:focus {
+      outline: none;
+      border-color: #155DFB;
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(21, 93, 251, 0.15);
+    }
+    .cell-conflict .mandatory-input { border-color: #f5c2c7; }
+    .cell-mandatory-warn .mandatory-input { border-color: #fdba74; }
+
     @media (max-width: 960px) {
       .page-shell { padding: 0; }
       .maisa-split-layout {
@@ -487,8 +661,6 @@
         min-height: auto;
         border-radius: 0;
       }
-      .maisa-split-pane-right { flex: none; max-height: 360px; }
-      .maisa-split-divider { display: none; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
@@ -501,12 +673,12 @@
         <div class="maisa-page-container">
           <div class="maisa-section maisa-section-header">
             <div>
-              <h2 class="maisa-title">订单 AI 分析校验</h2>
+              <h2 class="maisa-title">Order AI Validation Review</h2>
               <div class="meta-row" style="margin-top:6px;">
                 <span class="meta-chip">Order Q2600928854</span>
               </div>
             </div>
-            <span class="review-result"><strong id="pending-count">13</strong> 项待确认</span>
+            <span class="review-result"><strong id="pending-count">13</strong> pending review</span>
           </div>
 
           <div class="maisa-section">
@@ -516,25 +688,26 @@
                   <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16ZM8 10.4C8.60751 10.4 9.1 10.8925 9.1 11.5C9.1 12.1075 8.60751 12.6 8 12.6C7.39249 12.6 6.9 12.1075 6.9 11.5C6.9 10.8925 7.39249 10.4 8 10.4ZM8 3.5C8.51284 3.5 8.93551 3.88604 8.99327 4.38338L9 4.5V8C9 8.55229 8.55229 9 8 9C7.48716 9 7.06449 8.61396 7.00673 8.11662L7 8V4.5C7 3.94772 7.44772 3.5 8 3.5Z"/>
                 </svg>
               </span>
-              <span class="qima-block-banner__message">校验完成前，<span class="bold">请勿</span>直接上传 Excel 更新 Booking。请先在左侧确认每列的最终值，再导出最终版 Excel。</span>
+              <span class="qima-block-banner__message">Before validation is complete, <span class="bold">do not</span> upload Excel directly to update Booking. Confirm final values for each column on the left, then export the final Excel.</span>
             </div>
           </div>
 
           <div class="maisa-section maisa-card-bg">
             <div class="summary-grid">
-              <div class="summary-card pass"><div class="num">12</div><div class="lbl">已匹配</div></div>
-              <div class="summary-card conflict"><div class="num">13</div><div class="lbl">冲突</div></div>
-              <div class="summary-card warn"><div class="num">12</div><div class="lbl">AI 新增</div></div>
-              <div class="summary-card conflict"><div class="num">50</div><div class="lbl">AI 缺失</div></div>
-              <div class="summary-card"><div class="num">4</div><div class="lbl">异常字段列</div></div>
+              <div class="summary-card pass"><div class="num">12</div><div class="lbl">Matched</div></div>
+              <div class="summary-card conflict"><div class="num">13</div><div class="lbl">Conflicts</div></div>
+              <div class="summary-card warn"><div class="num">12</div><div class="lbl">AI added</div></div>
+              <div class="summary-card conflict"><div class="num">50</div><div class="lbl">AI missing</div></div>
+              <div class="summary-card"><div class="num">4</div><div class="lbl">Flagged columns</div></div>
             </div>
           </div>
 
+          <div id="viewV1" class="review-view">
           <div class="maisa-compare-panel">
             <div class="maisa-section maisa-section-header maisa-padding_bottom" style="margin-bottom:4px">
               <span class="maisa-section-title">
                 <img class="maisa-section-icon" src="icons/container.svg" alt="" width="20" height="20">
-                按列聚合 · 异常字段
+                Column aggregation · Flagged fields
               </span>
             </div>
 
@@ -542,34 +715,34 @@
               <div class="maisa-section maisa-card-bg maisa-collapse-card" data-column="total-pcs">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
                   <button type="button" class="maisa-collapse-toggle" aria-expanded="true">
-                    <span class="maisa-section-title">Total Pcs · 3 行异常</span>
+                    <span class="maisa-section-title">Total Pcs · 3 flagged rows</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
                 </div>
                 <div class="maisa-collapse-body" style="padding-top:12px;">
                   <div class="column-toolbar">
                     <div class="btn-row">
-                      <button type="button" class="btn primary" data-accept-column="total-pcs">整列接受 AI 建议</button>
-                      <button type="button" class="btn" data-reset-column="total-pcs">整列恢复原始值</button>
+                      <button type="button" class="btn primary" data-accept-column="total-pcs">Accept all AI for column</button>
+                      <button type="button" class="btn" data-reset-column="total-pcs">Restore original column</button>
                     </div>
                   </div>
                   <div class="maisa-table-scroll">
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
-                          <th>状态</th>
+                          <th>Status</th>
                           <th class="maisa-col-label">PO / Item</th>
-                          <th>Booking 原值</th>
-                          <th>来源文档</th>
-                          <th>AI 建议</th>
-                          <th>取值</th>
-                          <th>最终值</th>
+                          <th>Booking original</th>
+                          <th>Source document</th>
+                          <th>AI suggestion</th>
+                          <th>Source</th>
+                          <th>Final value</th>
                           <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr data-row="total-pcs-1">
-                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
                           <td>1,736</td>
@@ -577,18 +750,18 @@
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
-                              <button type="button" data-use="original">原值</button>
+                              <button type="button" data-use="original">Orig.</button>
                             </span>
                           </td>
                           <td><input class="final-input" value="1,736" data-original="868" data-ai="1,736"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
                         </tr>
                         <tr data-row="total-pcs-2">
-                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
                           <td>1,024</td>
@@ -596,31 +769,31 @@
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
-                              <button type="button" data-use="original">原值</button>
+                              <button type="button" data-use="original">Orig.</button>
                             </span>
                           </td>
                           <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
                         </tr>
                         <tr data-row="total-pcs-3">
-                          <td><span class="status-tag missing" data-kind="missing" data-label="缺失">缺失</span></td>
+                          <td><span class="status-tag missing" data-kind="missing" data-label="Missing">Missing</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATW</td>
-                          <td>空白</td>
+                          <td>Blank</td>
                           <td>640</td>
                           <td>640</td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
-                              <button type="button" data-use="original">原值</button>
+                              <button type="button" data-use="original">Orig.</button>
                             </span>
                           </td>
                           <td><input class="final-input" value="640" data-original="" data-ai="640"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
@@ -634,52 +807,52 @@
               <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="cartons">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
                   <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
-                    <span class="maisa-section-title">Carton(s) · 2 行异常</span>
+                    <span class="maisa-section-title">Carton(s) · 2 flagged rows</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
                 </div>
                 <div class="maisa-collapse-body" style="padding-top:12px;">
                   <div class="column-toolbar">
                     <div class="btn-row">
-                      <button type="button" class="btn primary" data-accept-column="cartons">整列接受 AI 建议</button>
+                      <button type="button" class="btn primary" data-accept-column="cartons">Accept all AI for column</button>
                     </div>
                   </div>
                   <div class="maisa-table-scroll">
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
-                          <th>状态</th>
+                          <th>Status</th>
                           <th class="maisa-col-label">PO / Item</th>
-                          <th>Booking 原值</th>
-                          <th>来源文档</th>
-                          <th>AI 建议</th>
-                          <th>最终值</th>
+                          <th>Booking original</th>
+                          <th>Source document</th>
+                          <th>AI suggestion</th>
+                          <th>Final value</th>
                           <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
                           <td>1,629</td>
                           <td>1,629</td>
                           <td><input class="final-input" value="1,629" data-original="868" data-ai="1,629"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
                         </tr>
                         <tr>
-                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
                           <td>1,024</td>
                           <td>1,024</td>
                           <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
@@ -693,7 +866,7 @@
               <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="upc">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
                   <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
-                    <span class="maisa-section-title">UPC No. or Barcode · 1 行异常</span>
+                    <span class="maisa-section-title">UPC No. or Barcode · 1 flagged row</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -702,25 +875,25 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
-                          <th>状态</th>
+                          <th>Status</th>
                           <th class="maisa-col-label">PO / Item</th>
-                          <th>Booking 原值</th>
-                          <th>Forecast / 来源</th>
-                          <th>AI 建议</th>
-                          <th>最终值</th>
+                          <th>Booking original</th>
+                          <th>Forecast / source</th>
+                          <th>AI suggestion</th>
+                          <th>Final value</th>
                           <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td><span class="status-tag missing" data-kind="missing" data-label="缺失">缺失</span></td>
+                          <td><span class="status-tag missing" data-kind="missing" data-label="Missing">Missing</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
-                          <td>空白</td>
+                          <td>Blank</td>
                           <td>193969120001</td>
                           <td>193969120001</td>
                           <td><input class="final-input" value="193969120001" data-original="" data-ai="193969120001"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
@@ -734,7 +907,7 @@
               <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="gross-weight">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
                   <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
-                    <span class="maisa-section-title">Gross Weight · 1 行异常</span>
+                    <span class="maisa-section-title">Gross Weight · 1 flagged row</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -743,25 +916,25 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
-                          <th>状态</th>
+                          <th>Status</th>
                           <th class="maisa-col-label">PO / Item</th>
-                          <th>Booking 原值</th>
-                          <th>来源文档</th>
-                          <th>AI 建议</th>
-                          <th>最终值</th>
+                          <th>Booking original</th>
+                          <th>Source document</th>
+                          <th>AI suggestion</th>
+                          <th>Final value</th>
                           <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>7,820</td>
                           <td>8,160</td>
                           <td>8,160</td>
                           <td><input class="final-input" value="8,160" data-original="7,820" data-ai="8,160"></td>
                           <td class="maisa-col-action">
-                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                            <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                           </td>
@@ -774,117 +947,202 @@
             </div>
 
           </div>
+          </div>
+
+          <div id="viewV2" class="review-view is-hidden">
+            <div class="v2-panel maisa-card-bg" style="padding:12px 14px;">
+              <div class="maisa-section-header maisa-padding_bottom" style="margin-bottom:8px">
+                <span class="maisa-section-title">
+                  <img class="maisa-section-icon" src="icons/container.svg" alt="" width="20" height="20">
+                  Mandatory grid editor · V2
+                </span>
+              </div>
+              <p style="font-size:12px;color:#737373;margin-bottom:10px;">Shows all columns marked with <span class="mandatory-mark">!</span>. Cell colors indicate comparison status; edit final values directly in the inputs.</p>
+              <div class="v2-legend" aria-label="Diff legend">
+                <div class="v2-legend__title">Diff Excel color legend</div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eaf6f2"></span><span><strong>Green</strong> — Match (both sides / all three agree)</span></div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Conflict: black supplier vs blue AI (Walmart adds green forecast)</span></div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eef3ff"></span><span><strong>Light blue</strong> — AI has value, supplier missing</span></div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#f3f4f6"></span><span><strong>Grey</strong> — Supplier has value, AI not extracted</span></div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fffbeb"></span><span><strong>Yellow</strong> — Missing both sides, business default applied</span></div>
+                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ffedd5"></span><span><strong>Orange</strong> — Mandatory field empty with no default</span></div>
+              </div>
+              <div class="booking-grid-wrap">
+                <table class="booking-grid" id="bookingGridTable">
+                  <thead>
+                    <tr>
+                      <th class="row-label">PO / Item</th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>P.O. Number<span class="th-sub">PO number</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Vendor Model<span class="th-sub">Model</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Product Description<span class="th-sub">Description</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Pallets<span class="th-sub">Pallets</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Carton(s)<span class="th-sub">Cartons</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Total Pcs<span class="th-sub">Total pcs</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Containers<span class="th-sub">Containers</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Material<span class="th-sub">Material</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>UPC / Barcode<span class="th-sub">Barcode</span></th>
+                      <th class="mandatory-head"><span class="mandatory-mark">!</span>CY / CFS<span class="th-sub">CY or CFS</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-v2-row="latg">
+                      <td class="row-label">7601224378 / AV18HSLATG</td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATG"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></td>
+                      <td class="mandatory-cell cell-default">
+                        <div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div>
+                        <input class="mandatory-input" value="NO">
+                      </td>
+                      <td class="mandatory-cell cell-conflict">
+                        <div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,629</span></div>
+                        <input class="mandatory-input" value="1,629">
+                      </td>
+                      <td class="mandatory-cell cell-conflict">
+                        <div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,736</span></div>
+                        <input class="mandatory-input" value="1,736">
+                      </td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
+                      <td class="mandatory-cell cell-ai">
+                        <div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">193969120001</span></div>
+                        <input class="mandatory-input" value="193969120001">
+                      </td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
+                    </tr>
+                    <tr data-v2-row="latb">
+                      <td class="row-label">7601224378 / AV18HSLATB</td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATB"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Tiffany"></td>
+                      <td class="mandatory-cell cell-default"><input class="mandatory-input" value="NO"></td>
+                      <td class="mandatory-cell cell-conflict">
+                        <div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div>
+                        <input class="mandatory-input" value="1,024">
+                      </td>
+                      <td class="mandatory-cell cell-conflict">
+                        <div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div>
+                        <input class="mandatory-input" value="1,024">
+                      </td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123456"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
+                    </tr>
+                    <tr data-v2-row="latw">
+                      <td class="row-label">7601224378 / AV18HSLATW</td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATW"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub White"></td>
+                      <td class="mandatory-cell cell-miss">
+                        <div class="cell-stack"><span class="stack-line stack-supplier">NO</span><span class="stack-line stack-miss">—</span></div>
+                        <input class="mandatory-input" value="NO">
+                      </td>
+                      <td class="mandatory-cell cell-ai">
+                        <div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">640</span></div>
+                        <input class="mandatory-input" value="640">
+                      </td>
+                      <td class="mandatory-cell cell-mandatory-warn">
+                        <div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div>
+                        <input class="mandatory-input" value="640" placeholder="Required">
+                      </td>
+                      <td class="mandatory-cell cell-default"><input class="mandatory-input" value="1"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123457"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
+                    </tr>
+                    <tr data-v2-row="latr">
+                      <td class="row-label">7601224378 / AV18HSLATR</td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATR"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Red"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="NO"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="420"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="420"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123458"></td>
+                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
         </div>
         </div>
         <div class="action-bar action-bar--dock">
           <div class="btn-row">
-            <button type="button" class="btn">下载对比版 Excel</button>
-            <button type="button" class="btn primary">导出最终 Excel</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="maisa-split-divider" id="maisaSplitDivider" role="separator" aria-label="调整面板宽度" aria-orientation="vertical"></div>
-
-      <div class="maisa-split-pane maisa-split-pane-right">
-        <div class="excel-preview-head">
-          <div>
-            <h2>对比版 Excel 预览</h2>
-            <p>Q2600928854 · Walmart · 48 个必填字段比对</p>
-          </div>
-          <span class="meta-chip">仅供对照，不在此页编辑</span>
-        </div>
-        <div class="excel-preview-body">
-          <div class="legend" aria-label="Color legend">
-            <span class="legend-item"><span class="legend-swatch ok"></span>匹配</span>
-            <span class="legend-item"><span class="legend-swatch diff"></span>异常不匹配</span>
-            <span class="legend-item"><span class="legend-swatch ai"></span>AI 提取值</span>
-            <span class="legend-item"><span class="legend-swatch miss"></span>缺失</span>
-          </div>
-          <div class="maisa-table-scroll">
-            <table class="excel-mock" aria-label="Comparison Excel preview">
-              <thead>
-                <tr>
-                  <th style="width:16%">PO / Item</th>
-                  <th style="width:12%">Carton(s)</th>
-                  <th style="width:12%">Total Pcs</th>
-                  <th style="width:12%">Gross Weight</th>
-                  <th style="width:18%">UPC No.</th>
-                  <th style="width:14%">Factory</th>
-                  <th style="width:16%">Ship Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="row-label">7601224378 / AV18HSLATG</td>
-                  <td class="diff">868</td>
-                  <td class="diff">868</td>
-                  <td class="ok">12,450</td>
-                  <td class="miss">空白</td>
-                  <td class="ok">CN-SZ-01</td>
-                  <td class="ok">2026-03-18</td>
-                </tr>
-                <tr>
-                  <td class="row-label">7601224378 / AV18HSLATB</td>
-                  <td class="diff">512</td>
-                  <td class="diff">512</td>
-                  <td class="diff">7,820</td>
-                  <td class="ok">193969123456</td>
-                  <td class="ok">CN-SZ-01</td>
-                  <td class="ok">2026-03-18</td>
-                </tr>
-                <tr>
-                  <td class="row-label">7601224378 / AV18HSLATW</td>
-                  <td class="ai">640</td>
-                  <td class="miss">空白</td>
-                  <td class="ok">9,120</td>
-                  <td class="ok">193969123457</td>
-                  <td class="ok">CN-SZ-01</td>
-                  <td class="ok">2026-03-18</td>
-                </tr>
-                <tr>
-                  <td class="row-label">7601224378 / AV18HSLATR</td>
-                  <td class="ok">420</td>
-                  <td class="ok">420</td>
-                  <td class="ok">6,300</td>
-                  <td class="ok">193969123458</td>
-                  <td class="ok">CN-SZ-01</td>
-                  <td class="ok">2026-03-18</td>
-                </tr>
-              </tbody>
-            </table>
+            <button type="button" class="btn">Download diff Excel</button>
+            <button type="button" class="btn">Export final Excel</button>
+            <button type="button" class="btn primary" id="btnUpdateOrder">Update order</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="version-switch" id="versionSwitch" aria-label="View version switch">
+    <button type="button" class="version-switch__btn active" data-version="v1">V1</button>
+    <button type="button" class="version-switch__btn" data-version="v2">V2</button>
+  </div>
+
+  <div class="excel-modal" id="orderUpdateModal" aria-hidden="true">
+    <div class="excel-modal__backdrop" data-close-modal></div>
+    <div class="excel-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderUpdateModalTitle">
+      <div class="excel-modal__head">
+        <div>
+          <h2 id="orderUpdateModalTitle">Update order · Final Excel preview</h2>
+          <p>Q2600928854 · Generated from confirmed final values on the left</p>
+        </div>
+        <button type="button" class="excel-modal__close" data-close-modal aria-label="Close">×</button>
+      </div>
+      <div class="excel-modal__body">
+        <p class="excel-modal__note">Review the Excel content below. On confirm, it will update the Booking order. <strong>Orange highlight</strong> indicates a change from the Booking original.</p>
+        <div class="legend" aria-label="Color legend">
+          <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
+          <span class="legend-item"><span class="legend-swatch changed"></span>Changed</span>
+        </div>
+        <div class="maisa-table-scroll">
+          <table class="excel-mock" aria-label="Final Excel preview for order update">
+            <thead>
+              <tr>
+                <th style="width:18%">PO / Item</th>
+                <th style="width:12%">Carton(s)</th>
+                <th style="width:12%">Total Pcs</th>
+                <th style="width:14%">Gross Weight</th>
+                <th style="width:18%">UPC No.</th>
+                <th style="width:14%">Factory</th>
+                <th style="width:14%">Ship Date</th>
+              </tr>
+            </thead>
+            <tbody id="orderUpdatePreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="excel-modal__foot">
+        <button type="button" class="btn" data-close-modal>Cancel</button>
+        <button type="button" class="btn primary" id="btnConfirmOrderUpdate">Confirm update</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
-      var layout = document.getElementById('maisaSplitLayout');
-      var leftPane = document.getElementById('maisaLeftPane');
-      var divider = document.getElementById('maisaSplitDivider');
-      var dragging = false;
+      var viewV1 = document.getElementById('viewV1');
+      var viewV2 = document.getElementById('viewV2');
 
-      divider.addEventListener('mousedown', function (event) {
-        dragging = true;
-        layout.classList.add('is-resizing');
-        event.preventDefault();
-      });
-
-      window.addEventListener('mousemove', function (event) {
-        if (!dragging) return;
-        var rect = layout.getBoundingClientRect();
-        var next = event.clientX - rect.left;
-        var min = rect.width * 0.28;
-        var max = rect.width * 0.72;
-        next = Math.max(min, Math.min(max, next));
-        leftPane.style.flexBasis = next + 'px';
-      });
-
-      window.addEventListener('mouseup', function () {
-        dragging = false;
-        layout.classList.remove('is-resizing');
+      document.querySelectorAll('[data-version]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var version = btn.dataset.version;
+          document.querySelectorAll('[data-version]').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.version === version);
+          });
+          if (viewV1) viewV1.classList.toggle('is-hidden', version !== 'v1');
+          if (viewV2) viewV2.classList.toggle('is-hidden', version !== 'v2');
+        });
       });
 
       document.querySelectorAll('.maisa-collapse-card').forEach(function (card) {
@@ -898,7 +1156,7 @@
 
       function applyValue(input, mode) {
         var value = mode === 'original' ? input.dataset.original : input.dataset.ai;
-        input.value = value || '空白';
+        input.value = value || 'Blank';
         input.classList.toggle('accepted', mode === 'ai');
         input.classList.toggle('edited', mode === 'original' && input.dataset.original !== input.dataset.ai);
       }
@@ -967,10 +1225,10 @@
         if (tag) {
           if (confirmed) {
             tag.className = 'status-tag done';
-            tag.textContent = '已确认';
+            tag.textContent = 'Confirmed';
           } else {
             tag.className = 'status-tag ' + (tag.dataset.kind || 'conflict');
-            tag.textContent = tag.dataset.label || '冲突';
+            tag.textContent = tag.dataset.label || 'Conflict';
           }
         }
         updatePendingCount();
@@ -984,6 +1242,180 @@
       });
 
       updatePendingCount();
+
+      var orderUpdateModal = document.getElementById('orderUpdateModal');
+      var btnUpdateOrder = document.getElementById('btnUpdateOrder');
+      var previewBaselines = [
+        {
+          label: '7601224378 / AV18HSLATG',
+          fields: {
+            cartons: { original: '868', final: '868' },
+            totalPcs: { original: '868', final: '868' },
+            grossWeight: { original: '12,450', final: '12,450' },
+            upc: { original: '', final: '' },
+            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
+            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+          }
+        },
+        {
+          label: '7601224378 / AV18HSLATB',
+          fields: {
+            cartons: { original: '512', final: '512' },
+            totalPcs: { original: '512', final: '512' },
+            grossWeight: { original: '7,820', final: '7,820' },
+            upc: { original: '193969123456', final: '193969123456' },
+            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
+            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+          }
+        },
+        {
+          label: '7601224378 / AV18HSLATW',
+          fields: {
+            cartons: { original: '640', final: '640' },
+            totalPcs: { original: '', final: '' },
+            grossWeight: { original: '9,120', final: '9,120' },
+            upc: { original: '193969123457', final: '193969123457' },
+            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
+            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+          }
+        },
+        {
+          label: '7601224378 / AV18HSLATR',
+          fields: {
+            cartons: { original: '420', final: '420' },
+            totalPcs: { original: '420', final: '420' },
+            grossWeight: { original: '6,300', final: '6,300' },
+            upc: { original: '193969123458', final: '193969123458' },
+            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
+            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+          }
+        }
+      ];
+      var columnFieldMap = {
+        'total-pcs': 'totalPcs',
+        'cartons': 'cartons',
+        'upc': 'upc',
+        'gross-weight': 'grossWeight'
+      };
+      var previewFieldOrder = ['cartons', 'totalPcs', 'grossWeight', 'upc', 'factory', 'shipDate'];
+
+      function clonePreviewRows() {
+        return previewBaselines.map(function (row) {
+          return {
+            label: row.label,
+            fields: JSON.parse(JSON.stringify(row.fields))
+          };
+        });
+      }
+
+      function normalizePreviewValue(value) {
+        var normalized = (value || '').replace(/,/g, '').trim();
+        return normalized === 'Blank' ? '' : normalized;
+      }
+
+      function isPreviewFieldChanged(original, final) {
+        return normalizePreviewValue(original) !== normalizePreviewValue(final);
+      }
+
+      function makePreviewLabelCell(text) {
+        var td = document.createElement('td');
+        td.className = 'row-label';
+        td.textContent = text;
+        return td;
+      }
+
+      function makePreviewValueCell(field) {
+        var td = document.createElement('td');
+        var original = field.original || '';
+        var finalValue = field.final || original || 'Blank';
+        if (!finalValue) finalValue = 'Blank';
+        var changed = isPreviewFieldChanged(original, finalValue);
+        td.className = changed ? 'changed' : 'ok';
+        td.textContent = finalValue;
+        if (changed) {
+          td.title = 'Booking original: ' + (original || 'Blank');
+        }
+        return td;
+      }
+
+      function refreshOrderUpdatePreview() {
+        var tbody = document.getElementById('orderUpdatePreviewBody');
+        if (!tbody) return;
+
+        var rows = clonePreviewRows();
+        var rowByLabel = {};
+        rows.forEach(function (row) {
+          rowByLabel[row.label] = row;
+        });
+
+        document.querySelectorAll('[data-column]').forEach(function (card) {
+          var fieldKey = columnFieldMap[card.dataset.column];
+          if (!fieldKey) return;
+          card.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (tr) {
+            var labelCell = tr.querySelector('.maisa-col-label');
+            var input = tr.querySelector('.final-input');
+            if (!labelCell || !input) return;
+            var label = labelCell.textContent.trim();
+            if (!rowByLabel[label]) {
+              var newRow = { label: label, fields: {} };
+              rows.push(newRow);
+              rowByLabel[label] = newRow;
+            }
+            var bookingCell = tr.cells[2];
+            var original = input.dataset.original || (bookingCell ? bookingCell.textContent.trim() : '');
+            rowByLabel[label].fields[fieldKey] = {
+              original: original,
+              final: input.value.trim()
+            };
+          });
+        });
+
+        tbody.innerHTML = '';
+        rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          tr.appendChild(makePreviewLabelCell(row.label));
+          previewFieldOrder.forEach(function (fieldKey) {
+            tr.appendChild(makePreviewValueCell(row.fields[fieldKey] || { original: '', final: '' }));
+          });
+          tbody.appendChild(tr);
+        });
+      }
+
+      function openOrderUpdateModal() {
+        if (!orderUpdateModal) return;
+        refreshOrderUpdatePreview();
+        orderUpdateModal.classList.add('is-open');
+        orderUpdateModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeOrderUpdateModal() {
+        if (!orderUpdateModal) return;
+        orderUpdateModal.classList.remove('is-open');
+        orderUpdateModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      if (btnUpdateOrder) {
+        btnUpdateOrder.addEventListener('click', openOrderUpdateModal);
+      }
+
+      if (orderUpdateModal) {
+        orderUpdateModal.querySelectorAll('[data-close-modal]').forEach(function (el) {
+          el.addEventListener('click', closeOrderUpdateModal);
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && orderUpdateModal && orderUpdateModal.classList.contains('is-open')) {
+          closeOrderUpdateModal();
+        }
+      });
+
+      var btnConfirmOrderUpdate = document.getElementById('btnConfirmOrderUpdate');
+      if (btnConfirmOrderUpdate) {
+        btnConfirmOrderUpdate.addEventListener('click', closeOrderUpdateModal);
+      }
     })();
   </script>
 </body>
