@@ -414,6 +414,37 @@
     .status-tag.missing { background: #f3f4f6; color: #737373; }
     .status-tag.done { background: #eaf6f2; color: #006648; }
 
+    .maisa-col-action {
+      width: 44px;
+      text-align: center;
+    }
+    .row-confirm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      color: #737373;
+      padding: 0;
+    }
+    .row-confirm-btn:hover {
+      border-color: #00a876;
+      color: #00a876;
+      background: #f3faf7;
+    }
+    .row-confirm-btn.is-confirmed {
+      background: #00a876;
+      border-color: #00a876;
+      color: #fff;
+    }
+    .maisa-compare-table tr.is-confirmed .final-input {
+      border-color: #00a876;
+      background: #eaf6f2;
+    }
+
     .action-bar {
       display: flex;
       flex-wrap: wrap;
@@ -526,57 +557,73 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
+                          <th>状态</th>
                           <th class="maisa-col-label">PO / Item</th>
                           <th>Booking 原值</th>
                           <th>来源文档</th>
                           <th>AI 建议</th>
-                          <th>最终值</th>
                           <th>取值</th>
-                          <th>状态</th>
+                          <th>最终值</th>
+                          <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr data-row="total-pcs-1">
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
                           <td>1,736</td>
                           <td>1,736</td>
-                          <td><input class="final-input" value="1,736" data-original="868" data-ai="1,736"></td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
                               <button type="button" data-use="original">原值</button>
                             </span>
                           </td>
-                          <td><span class="status-tag conflict">冲突</span></td>
+                          <td><input class="final-input" value="1,736" data-original="868" data-ai="1,736"></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                         <tr data-row="total-pcs-2">
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
                           <td>1,024</td>
                           <td>1,024</td>
-                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
                               <button type="button" data-use="original">原值</button>
                             </span>
                           </td>
-                          <td><span class="status-tag conflict">冲突</span></td>
+                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                         <tr data-row="total-pcs-3">
+                          <td><span class="status-tag missing" data-kind="missing" data-label="缺失">缺失</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATW</td>
                           <td>空白</td>
                           <td>640</td>
                           <td>640</td>
-                          <td><input class="final-input" value="640" data-original="" data-ai="640"></td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
                               <button type="button" data-use="original">原值</button>
                             </span>
                           </td>
-                          <td><span class="status-tag missing">缺失</span></td>
+                          <td><input class="final-input" value="640" data-original="" data-ai="640"></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -593,7 +640,6 @@
                 </div>
                 <div class="maisa-collapse-body" style="padding-top:12px;">
                   <div class="column-toolbar">
-                    <p>箱数列存在与来源文档不一致的行，可单独确认或批量接受 AI 建议。</p>
                     <div class="btn-row">
                       <button type="button" class="btn primary" data-accept-column="cartons">整列接受 AI 建议</button>
                     </div>
@@ -602,30 +648,41 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
+                          <th>状态</th>
                           <th class="maisa-col-label">PO / Item</th>
                           <th>Booking 原值</th>
                           <th>来源文档</th>
                           <th>AI 建议</th>
                           <th>最终值</th>
-                          <th>状态</th>
+                          <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
                           <td>1,629</td>
                           <td>1,629</td>
                           <td><input class="final-input" value="1,629" data-original="868" data-ai="1,629"></td>
-                          <td><span class="status-tag conflict">冲突</span></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                         <tr>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
                           <td>1,024</td>
                           <td>1,024</td>
                           <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
-                          <td><span class="status-tag conflict">冲突</span></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -645,22 +702,28 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
+                          <th>状态</th>
                           <th class="maisa-col-label">PO / Item</th>
                           <th>Booking 原值</th>
                           <th>Forecast / 来源</th>
                           <th>AI 建议</th>
                           <th>最终值</th>
-                          <th>状态</th>
+                          <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
+                          <td><span class="status-tag missing" data-kind="missing" data-label="缺失">缺失</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>空白</td>
                           <td>193969120001</td>
                           <td>193969120001</td>
                           <td><input class="final-input" value="193969120001" data-original="" data-ai="193969120001"></td>
-                          <td><span class="status-tag missing">缺失</span></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -680,22 +743,28 @@
                     <table class="maisa-compare-table">
                       <thead>
                         <tr>
+                          <th>状态</th>
                           <th class="maisa-col-label">PO / Item</th>
                           <th>Booking 原值</th>
                           <th>来源文档</th>
                           <th>AI 建议</th>
                           <th>最终值</th>
-                          <th>状态</th>
+                          <th class="maisa-col-action"></th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
+                          <td><span class="status-tag conflict" data-kind="conflict" data-label="冲突">冲突</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>7,820</td>
                           <td>8,160</td>
                           <td>8,160</td>
                           <td><input class="final-input" value="8,160" data-original="7,820" data-ai="8,160"></td>
-                          <td><span class="status-tag conflict">冲突</span></td>
+                          <td class="maisa-col-action">
+                            <button type="button" class="row-confirm-btn" aria-label="确认此行" title="确认">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -874,6 +943,47 @@
           });
         });
       });
+
+      var pendingEl = document.getElementById('pending-count');
+
+      function getReviewRows() {
+        return document.querySelectorAll('.maisa-compare-table tbody tr');
+      }
+
+      function updatePendingCount() {
+        if (!pendingEl) return;
+        var pending = 0;
+        getReviewRows().forEach(function (row) {
+          if (!row.classList.contains('is-confirmed')) pending += 1;
+        });
+        pendingEl.textContent = String(pending);
+      }
+
+      function setRowConfirmed(row, confirmed) {
+        row.classList.toggle('is-confirmed', confirmed);
+        var btn = row.querySelector('.row-confirm-btn');
+        var tag = row.querySelector('.status-tag');
+        if (btn) btn.classList.toggle('is-confirmed', confirmed);
+        if (tag) {
+          if (confirmed) {
+            tag.className = 'status-tag done';
+            tag.textContent = '已确认';
+          } else {
+            tag.className = 'status-tag ' + (tag.dataset.kind || 'conflict');
+            tag.textContent = tag.dataset.label || '冲突';
+          }
+        }
+        updatePendingCount();
+      }
+
+      document.querySelectorAll('.row-confirm-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('tr');
+          setRowConfirmed(row, !row.classList.contains('is-confirmed'));
+        });
+      });
+
+      updatePendingCount();
     })();
   </script>
 </body>
