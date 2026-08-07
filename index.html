@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>订单 AI 分析校验 · Q2600928854</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: Inter, "Noto Sans SC", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #191919;
+      background: #f8f9fb;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .page-shell { min-height: 100vh; padding: 12px; }
+
+    .maisa-split-layout {
+      display: flex;
+      width: 100%;
+      min-height: calc(100vh - 24px);
+      border: 1px solid #dde1e6;
+      border-radius: 6px;
+      background-color: #f8f9fb;
+      overflow: hidden;
+    }
+    .maisa-split-pane { min-width: 0; }
+    .maisa-split-pane-left {
+      flex: 0 0 52%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: #f8f9fb;
+    }
+    .maisa-left-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .maisa-split-pane-right {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+    }
+    .excel-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dde1e6;
+      background: #f7f8fb;
+    }
+    .excel-preview-head h2 {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .excel-preview-head p {
+      margin-top: 2px;
+      font-size: 11px;
+      color: #737373;
+    }
+    .excel-preview-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 12px;
+      background: #fff;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #474747;
+    }
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .legend-swatch.ok { background: #eaf6f2; }
+    .legend-swatch.diff { background: #fdefef; }
+    .legend-swatch.ai { background: #eef3ff; }
+    .legend-swatch.miss { background: #f3f4f6; }
+
+    .excel-mock {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      table-layout: fixed;
+    }
+    .excel-mock th,
+    .excel-mock td {
+      border: 1px solid #dde1e6;
+      padding: 6px 8px;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+    .excel-mock th {
+      background: #f3f4f8;
+      color: #474747;
+      font-weight: 600;
+      text-align: left;
+    }
+    .excel-mock td.ok { background: #eaf6f2; }
+    .excel-mock td.diff { background: #fdefef; color: #9e141b; font-weight: 600; }
+    .excel-mock td.ai { background: #eef3ff; color: #1d4ed8; }
+    .excel-mock td.miss { background: #f3f4f6; color: #737373; }
+    .excel-mock .row-label { background: #fafafb; color: #6a7282; font-weight: 600; }
+
+    .maisa-split-divider {
+      position: relative;
+      width: 6px;
+      flex: 0 0 6px;
+      cursor: col-resize;
+      background-color: #e5e8ef;
+      border-left: 1px solid #d6dae4;
+      border-right: 1px solid #d6dae4;
+      z-index: 5;
+      touch-action: none;
+    }
+    .maisa-split-divider:hover,
+    .maisa-split-layout.is-resizing .maisa-split-divider { background-color: #c9cfdb; }
+    .maisa-split-divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 28px;
+      border-radius: 2px;
+      background-color: #9ca3b2;
+      transform: translate(-50%, -50%);
+    }
+    .maisa-split-layout.is-resizing { cursor: col-resize; user-select: none; }
+    .maisa-split-layout.is-resizing .excel-preview-body,
+    .maisa-split-layout.is-resizing .maisa-left-scroll { pointer-events: none; }
+
+    .maisa-page-container { margin: 20px 15px 24px; }
+
+    .maisa-page-container .maisa-title { margin: 0; font-size: 18px; }
+    .maisa-page-container .maisa-section { margin-bottom: 15px; }
+    .maisa-page-container .maisa-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .maisa-page-container .maisa-section-border_bottom {
+      border-bottom: #524DB1 2px solid;
+      margin-bottom: 5px;
+    }
+    .maisa-page-container .maisa-padding_bottom { padding-bottom: 5px; }
+    .maisa-page-container .maisa-section-title {
+      display: flex;
+      align-items: center;
+      padding-left: 5px;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .maisa-page-container .maisa-section-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #525252;
+    }
+    .meta-chip {
+      padding: 0;
+      border: none;
+      background: none;
+    }
+
+    .maisa-page-container .qima-block-banner {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+    .maisa-page-container .qima-block-banner--warning { background-color: #fcf2e6; }
+    .maisa-page-container .qima-block-banner--info { background-color: #fdefef; }
+    .maisa-page-container .qima-block-banner__icon {
+      flex: 0 0 auto;
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+    }
+    .maisa-page-container .qima-block-banner--warning .qima-block-banner__icon { color: #f58f00; }
+    .maisa-page-container .qima-block-banner--info .qima-block-banner__icon { color: #e5353d; }
+    .maisa-page-container .qima-block-banner__icon svg { display: block; width: 16px; height: 16px; }
+    .maisa-page-container .qima-block-banner__message {
+      width: 100%;
+      padding-left: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .maisa-page-container .qima-block-banner--warning .qima-block-banner__message { color: #b26309; }
+    .maisa-page-container .qima-block-banner--info .qima-block-banner__message { color: #9e141b; }
+    .maisa-page-container .qima-block-banner__message .bold { font-weight: 600; }
+
+    .maisa-page-container .maisa-alert-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      border-radius: 4px;
+      padding: 10px 14px;
+      color: #737373;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .summary-card {
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      padding: 10px 12px;
+    }
+    .summary-card .num {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .summary-card .lbl { margin-top: 4px; font-size: 11px; color: #737373; }
+    .summary-card.conflict .num { color: #e5353d; }
+    .summary-card.pass .num { color: #00a876; }
+    .summary-card.warn .num { color: #f58f00; }
+
+    .maisa-page-container .maisa-card-bg {
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      padding: 12px 14px;
+      background-color: #fff;
+    }
+    .maisa-page-container .maisa-compare-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .maisa-page-container .maisa-accordion-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .maisa-page-container .maisa-accordion-group > .maisa-section { margin-bottom: 0; }
+
+    .maisa-page-container .maisa-collapse-toggle {
+      all: unset;
+      box-sizing: border-box;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .maisa-page-container .maisa-collapse-caret {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 6px solid #191919;
+      border-top: 0;
+      margin-right: 4px;
+    }
+    .maisa-page-container .maisa-collapse-card.is-collapsed .maisa-collapse-caret {
+      border-bottom: 0;
+      border-top: 6px solid #191919;
+    }
+    .maisa-page-container .maisa-collapse-card.is-collapsed .maisa-collapse-body { display: none; }
+
+    .column-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .column-toolbar p {
+      font-size: 12px;
+      color: #737373;
+      max-width: 420px;
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .btn {
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #474747;
+    }
+    .btn:hover { background: #f7f8fb; }
+    .btn.primary {
+      background: #155DFB;
+      border-color: #155DFB;
+      color: #fff;
+    }
+    .btn.primary:hover { background: #1547E6; }
+    .btn.ghost { background: transparent; }
+
+    .maisa-page-container .maisa-compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+    .maisa-page-container .maisa-compare-table th,
+    .maisa-page-container .maisa-compare-table td {
+      border: 1px solid #dde1e6;
+      padding: 8px 10px;
+      vertical-align: middle;
+      word-break: break-word;
+      line-height: 1.45;
+    }
+    .maisa-page-container .maisa-compare-table th {
+      background: #f3f4f8;
+      color: #474747;
+      font-weight: 600;
+      text-align: left;
+    }
+    .maisa-page-container .maisa-compare-table .maisa-col-label {
+      width: 18%;
+      color: #6A7282;
+      background: #fafafb;
+    }
+    .maisa-page-container .maisa-table-scroll { overflow-x: auto; }
+
+    .final-input {
+      width: 100%;
+      min-width: 72px;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      padding: 5px 7px;
+      font-weight: 600;
+      background: #fff;
+    }
+    .final-input:focus {
+      outline: none;
+      border-color: #155DFB;
+      box-shadow: 0 0 0 2px rgba(21, 93, 251, 0.15);
+    }
+    .final-input.edited { border-color: #f58f00; background: #fcf2e6; }
+    .final-input.accepted { border-color: #00a876; background: #eaf6f2; }
+
+    .toggle-group {
+      display: inline-flex;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .toggle-group button {
+      border: 0;
+      background: #fff;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #737373;
+    }
+    .toggle-group button.active {
+      background: #eef3ff;
+      color: #155DFB;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .status-tag.conflict { background: #fdefef; color: #9e141b; }
+    .status-tag.missing { background: #f3f4f6; color: #737373; }
+    .status-tag.done { background: #eaf6f2; color: #006648; }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border: 1px solid #dde1e6;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .action-bar--dock {
+      flex-shrink: 0;
+      margin: 0;
+      border-radius: 0;
+      border: none;
+      border-top: 1px solid #dde1e6;
+      padding: 12px 20px;
+      box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
+      z-index: 10;
+    }
+    .action-bar p { font-size: 12px; color: #737373; max-width: 520px; }
+
+    .review-result {
+      display: inline-flex;
+      margin-top: 4px;
+      padding: 8px 14px;
+      gap: 6px;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #737373;
+      background: #fff;
+    }
+
+    @media (max-width: 960px) {
+      .page-shell { padding: 0; }
+      .maisa-split-layout {
+        flex-direction: column;
+        min-height: auto;
+        border-radius: 0;
+      }
+      .maisa-split-pane-right { flex: none; max-height: 360px; }
+      .maisa-split-divider { display: none; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="maisa-split-layout" id="maisaSplitLayout">
+<div class="maisa-split-pane maisa-split-pane-left" id="maisaLeftPane">
+        <div class="maisa-left-scroll">
+        <div class="maisa-page-container">
+          <div class="maisa-section maisa-section-header">
+            <div>
+              <h2 class="maisa-title">订单 AI 分析校验</h2>
+              <div class="meta-row" style="margin-top:6px;">
+                <span class="meta-chip">Order Q2600928854</span>
+              </div>
+            </div>
+            <span class="review-result"><strong id="pending-count">13</strong> 项待确认</span>
+          </div>
+
+          <div class="maisa-section">
+            <div class="qima-block-banner qima-block-banner--warning" role="alert">
+              <span class="qima-block-banner__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16ZM8 10.4C8.60751 10.4 9.1 10.8925 9.1 11.5C9.1 12.1075 8.60751 12.6 8 12.6C7.39249 12.6 6.9 12.1075 6.9 11.5C6.9 10.8925 7.39249 10.4 8 10.4ZM8 3.5C8.51284 3.5 8.93551 3.88604 8.99327 4.38338L9 4.5V8C9 8.55229 8.55229 9 8 9C7.48716 9 7.06449 8.61396 7.00673 8.11662L7 8V4.5C7 3.94772 7.44772 3.5 8 3.5Z"/>
+                </svg>
+              </span>
+              <span class="qima-block-banner__message">校验完成前，<span class="bold">请勿</span>直接上传 Excel 更新 Booking。请先在左侧确认每列的最终值，再导出最终版 Excel。</span>
+            </div>
+          </div>
+
+          <div class="maisa-section maisa-card-bg">
+            <div class="summary-grid">
+              <div class="summary-card pass"><div class="num">12</div><div class="lbl">已匹配</div></div>
+              <div class="summary-card conflict"><div class="num">13</div><div class="lbl">冲突</div></div>
+              <div class="summary-card warn"><div class="num">12</div><div class="lbl">AI 新增</div></div>
+              <div class="summary-card conflict"><div class="num">50</div><div class="lbl">AI 缺失</div></div>
+              <div class="summary-card"><div class="num">4</div><div class="lbl">异常字段列</div></div>
+            </div>
+          </div>
+
+          <div class="maisa-compare-panel">
+            <div class="maisa-section maisa-section-header maisa-padding_bottom" style="margin-bottom:4px">
+              <span class="maisa-section-title">
+                <img class="maisa-section-icon" src="icons/container.svg" alt="" width="20" height="20">
+                按列聚合 · 异常字段
+              </span>
+            </div>
+
+            <div class="maisa-accordion-group">
+              <div class="maisa-section maisa-card-bg maisa-collapse-card" data-column="total-pcs">
+                <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="true">
+                    <span class="maisa-section-title">Total Pcs · 3 行异常</span>
+                    <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <div class="maisa-collapse-body" style="padding-top:12px;">
+                  <div class="column-toolbar">
+                    <div class="btn-row">
+                      <button type="button" class="btn primary" data-accept-column="total-pcs">整列接受 AI 建议</button>
+                      <button type="button" class="btn" data-reset-column="total-pcs">整列恢复原始值</button>
+                    </div>
+                  </div>
+                  <div class="maisa-table-scroll">
+                    <table class="maisa-compare-table">
+                      <thead>
+                        <tr>
+                          <th class="maisa-col-label">PO / Item</th>
+                          <th>Booking 原值</th>
+                          <th>来源文档</th>
+                          <th>AI 建议</th>
+                          <th>最终值</th>
+                          <th>取值</th>
+                          <th>状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr data-row="total-pcs-1">
+                          <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
+                          <td>868</td>
+                          <td>1,736</td>
+                          <td>1,736</td>
+                          <td><input class="final-input" value="1,736" data-original="868" data-ai="1,736"></td>
+                          <td>
+                            <span class="toggle-group">
+                              <button type="button" class="active" data-use="ai">AI</button>
+                              <button type="button" data-use="original">原值</button>
+                            </span>
+                          </td>
+                          <td><span class="status-tag conflict">冲突</span></td>
+                        </tr>
+                        <tr data-row="total-pcs-2">
+                          <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
+                          <td>512</td>
+                          <td>1,024</td>
+                          <td>1,024</td>
+                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
+                          <td>
+                            <span class="toggle-group">
+                              <button type="button" class="active" data-use="ai">AI</button>
+                              <button type="button" data-use="original">原值</button>
+                            </span>
+                          </td>
+                          <td><span class="status-tag conflict">冲突</span></td>
+                        </tr>
+                        <tr data-row="total-pcs-3">
+                          <td class="maisa-col-label">7601224378 / AV18HSLATW</td>
+                          <td>空白</td>
+                          <td>640</td>
+                          <td>640</td>
+                          <td><input class="final-input" value="640" data-original="" data-ai="640"></td>
+                          <td>
+                            <span class="toggle-group">
+                              <button type="button" class="active" data-use="ai">AI</button>
+                              <button type="button" data-use="original">原值</button>
+                            </span>
+                          </td>
+                          <td><span class="status-tag missing">缺失</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="cartons">
+                <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                    <span class="maisa-section-title">Carton(s) · 2 行异常</span>
+                    <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <div class="maisa-collapse-body" style="padding-top:12px;">
+                  <div class="column-toolbar">
+                    <p>箱数列存在与来源文档不一致的行，可单独确认或批量接受 AI 建议。</p>
+                    <div class="btn-row">
+                      <button type="button" class="btn primary" data-accept-column="cartons">整列接受 AI 建议</button>
+                    </div>
+                  </div>
+                  <div class="maisa-table-scroll">
+                    <table class="maisa-compare-table">
+                      <thead>
+                        <tr>
+                          <th class="maisa-col-label">PO / Item</th>
+                          <th>Booking 原值</th>
+                          <th>来源文档</th>
+                          <th>AI 建议</th>
+                          <th>最终值</th>
+                          <th>状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
+                          <td>868</td>
+                          <td>1,629</td>
+                          <td>1,629</td>
+                          <td><input class="final-input" value="1,629" data-original="868" data-ai="1,629"></td>
+                          <td><span class="status-tag conflict">冲突</span></td>
+                        </tr>
+                        <tr>
+                          <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
+                          <td>512</td>
+                          <td>1,024</td>
+                          <td>1,024</td>
+                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
+                          <td><span class="status-tag conflict">冲突</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="upc">
+                <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                    <span class="maisa-section-title">UPC No. or Barcode · 1 行异常</span>
+                    <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <div class="maisa-collapse-body" style="padding-top:12px;">
+                  <div class="maisa-table-scroll">
+                    <table class="maisa-compare-table">
+                      <thead>
+                        <tr>
+                          <th class="maisa-col-label">PO / Item</th>
+                          <th>Booking 原值</th>
+                          <th>Forecast / 来源</th>
+                          <th>AI 建议</th>
+                          <th>最终值</th>
+                          <th>状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
+                          <td>空白</td>
+                          <td>193969120001</td>
+                          <td>193969120001</td>
+                          <td><input class="final-input" value="193969120001" data-original="" data-ai="193969120001"></td>
+                          <td><span class="status-tag missing">缺失</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="gross-weight">
+                <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                    <span class="maisa-section-title">Gross Weight · 1 行异常</span>
+                    <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <div class="maisa-collapse-body" style="padding-top:12px;">
+                  <div class="maisa-table-scroll">
+                    <table class="maisa-compare-table">
+                      <thead>
+                        <tr>
+                          <th class="maisa-col-label">PO / Item</th>
+                          <th>Booking 原值</th>
+                          <th>来源文档</th>
+                          <th>AI 建议</th>
+                          <th>最终值</th>
+                          <th>状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
+                          <td>7,820</td>
+                          <td>8,160</td>
+                          <td>8,160</td>
+                          <td><input class="final-input" value="8,160" data-original="7,820" data-ai="8,160"></td>
+                          <td><span class="status-tag conflict">冲突</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        </div>
+        <div class="action-bar action-bar--dock">
+          <div class="btn-row">
+            <button type="button" class="btn">下载对比版 Excel</button>
+            <button type="button" class="btn primary">导出最终 Excel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="maisa-split-divider" id="maisaSplitDivider" role="separator" aria-label="调整面板宽度" aria-orientation="vertical"></div>
+
+      <div class="maisa-split-pane maisa-split-pane-right">
+        <div class="excel-preview-head">
+          <div>
+            <h2>对比版 Excel 预览</h2>
+            <p>Q2600928854 · Walmart · 48 个必填字段比对</p>
+          </div>
+          <span class="meta-chip">仅供对照，不在此页编辑</span>
+        </div>
+        <div class="excel-preview-body">
+          <div class="legend" aria-label="Color legend">
+            <span class="legend-item"><span class="legend-swatch ok"></span>匹配</span>
+            <span class="legend-item"><span class="legend-swatch diff"></span>异常不匹配</span>
+            <span class="legend-item"><span class="legend-swatch ai"></span>AI 提取值</span>
+            <span class="legend-item"><span class="legend-swatch miss"></span>缺失</span>
+          </div>
+          <div class="maisa-table-scroll">
+            <table class="excel-mock" aria-label="Comparison Excel preview">
+              <thead>
+                <tr>
+                  <th style="width:16%">PO / Item</th>
+                  <th style="width:12%">Carton(s)</th>
+                  <th style="width:12%">Total Pcs</th>
+                  <th style="width:12%">Gross Weight</th>
+                  <th style="width:18%">UPC No.</th>
+                  <th style="width:14%">Factory</th>
+                  <th style="width:16%">Ship Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="row-label">7601224378 / AV18HSLATG</td>
+                  <td class="diff">868</td>
+                  <td class="diff">868</td>
+                  <td class="ok">12,450</td>
+                  <td class="miss">空白</td>
+                  <td class="ok">CN-SZ-01</td>
+                  <td class="ok">2026-03-18</td>
+                </tr>
+                <tr>
+                  <td class="row-label">7601224378 / AV18HSLATB</td>
+                  <td class="diff">512</td>
+                  <td class="diff">512</td>
+                  <td class="diff">7,820</td>
+                  <td class="ok">193969123456</td>
+                  <td class="ok">CN-SZ-01</td>
+                  <td class="ok">2026-03-18</td>
+                </tr>
+                <tr>
+                  <td class="row-label">7601224378 / AV18HSLATW</td>
+                  <td class="ai">640</td>
+                  <td class="miss">空白</td>
+                  <td class="ok">9,120</td>
+                  <td class="ok">193969123457</td>
+                  <td class="ok">CN-SZ-01</td>
+                  <td class="ok">2026-03-18</td>
+                </tr>
+                <tr>
+                  <td class="row-label">7601224378 / AV18HSLATR</td>
+                  <td class="ok">420</td>
+                  <td class="ok">420</td>
+                  <td class="ok">6,300</td>
+                  <td class="ok">193969123458</td>
+                  <td class="ok">CN-SZ-01</td>
+                  <td class="ok">2026-03-18</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var layout = document.getElementById('maisaSplitLayout');
+      var leftPane = document.getElementById('maisaLeftPane');
+      var divider = document.getElementById('maisaSplitDivider');
+      var dragging = false;
+
+      divider.addEventListener('mousedown', function (event) {
+        dragging = true;
+        layout.classList.add('is-resizing');
+        event.preventDefault();
+      });
+
+      window.addEventListener('mousemove', function (event) {
+        if (!dragging) return;
+        var rect = layout.getBoundingClientRect();
+        var next = event.clientX - rect.left;
+        var min = rect.width * 0.28;
+        var max = rect.width * 0.72;
+        next = Math.max(min, Math.min(max, next));
+        leftPane.style.flexBasis = next + 'px';
+      });
+
+      window.addEventListener('mouseup', function () {
+        dragging = false;
+        layout.classList.remove('is-resizing');
+      });
+
+      document.querySelectorAll('.maisa-collapse-card').forEach(function (card) {
+        var toggle = card.querySelector('.maisa-collapse-toggle');
+        if (!toggle) return;
+        toggle.addEventListener('click', function () {
+          var collapsed = card.classList.toggle('is-collapsed');
+          toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        });
+      });
+
+      function applyValue(input, mode) {
+        var value = mode === 'original' ? input.dataset.original : input.dataset.ai;
+        input.value = value || '空白';
+        input.classList.toggle('accepted', mode === 'ai');
+        input.classList.toggle('edited', mode === 'original' && input.dataset.original !== input.dataset.ai);
+      }
+
+      document.querySelectorAll('.toggle-group').forEach(function (group) {
+        group.addEventListener('click', function (event) {
+          var btn = event.target.closest('button[data-use]');
+          if (!btn) return;
+          group.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var input = group.closest('tr').querySelector('.final-input');
+          applyValue(input, btn.dataset.use);
+        });
+      });
+
+      document.querySelectorAll('[data-accept-column]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var column = button.closest('[data-column]');
+          column.querySelectorAll('.final-input').forEach(function (input) {
+            applyValue(input, 'ai');
+            var group = input.closest('tr').querySelector('.toggle-group');
+            if (group) {
+              group.querySelectorAll('button').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.use === 'ai');
+              });
+            }
+          });
+        });
+      });
+
+      document.querySelectorAll('[data-reset-column]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var column = button.closest('[data-column]');
+          column.querySelectorAll('.final-input').forEach(function (input) {
+            applyValue(input, 'original');
+            var group = input.closest('tr').querySelector('.toggle-group');
+            if (group) {
+              group.querySelectorAll('button').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.use === 'original');
+              });
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
