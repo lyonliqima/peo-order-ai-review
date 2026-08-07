@@ -589,10 +589,11 @@
     }
     .walmart-forecast-banner { margin-bottom: 12px; }
     .booking-grid-walmart {
-      min-width: 1380px;
+      width: max-content;
+      min-width: 0;
     }
     .booking-grid-walmart .walmart-cell-inner {
-      height: 86px;
+      height: 90px;
     }
     .booking-grid-walmart .cell-stack--triple {
       min-height: 48px;
@@ -620,7 +621,8 @@
       display: none;
     }
     .booking-grid-wrap.optional-columns-hidden .booking-grid {
-      min-width: 1120px;
+      width: max-content;
+      min-width: 0;
     }
     .v2-panel-toolbar {
       display: flex;
@@ -636,11 +638,11 @@
       overflow: auto;
     }
     .booking-grid {
-      width: 100%;
+      width: max-content;
+      max-width: none;
       border-collapse: collapse;
       font-size: 11px;
       table-layout: fixed;
-      min-width: 4200px;
     }
     .booking-grid th,
     .booking-grid td {
@@ -701,8 +703,8 @@
     .mandatory-cell-inner {
       display: flex;
       flex-direction: column;
-      height: 68px;
-      padding: 6px 8px;
+      height: 72px;
+      padding: 6px 8px 10px;
       box-sizing: border-box;
     }
     .cell-stack {
@@ -757,12 +759,12 @@
       z-index: 250;
       max-width: 340px;
       padding: 10px 12px;
-      border-radius: 6px;
-      background: #1f2937;
-      color: #f9fafb;
+      border-radius: 8px;
+      background: #153184;
+      color: #f2f5fd;
       font-size: 11px;
       line-height: 1.45;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.28);
+      box-shadow: 0 10px 28px rgba(21, 49, 132, 0.32);
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
@@ -779,9 +781,9 @@
     }
     .field-hover-tip__line { margin: 0; }
     .field-hover-tip__line + .field-hover-tip__line { margin-top: 4px; }
-    .field-hover-tip__line.is-warn { color: #fca5a5; font-weight: 600; }
-    .field-hover-tip__line.is-muted { color: #9ca3af; }
-    .field-hover-tip__label { color: #9ca3af; }
+    .field-hover-tip__line.is-warn { color: #fbdddd; font-weight: 600; }
+    .field-hover-tip__line.is-muted { color: #d3dcf8; }
+    .field-hover-tip__label { color: #d3dcf8; }
     .field-hover-tip__value { color: #fff; font-weight: 600; }
 
     @media (max-width: 960px) {
@@ -1100,8 +1102,8 @@
               <div class="booking-grid-wrap optional-columns-hidden" id="bookingGridWrap">
                 <table class="booking-grid" id="bookingGridTable">
                 <colgroup>
-                  <col class="col-w-lg">
-                  <col class="col-w-lg">
+                  <col class="col-w-sm">
+                  <col class="col-w-sm">
                   <col class="col-w-sm">
                   <col class="col-w-sm">
                   <col class="col-w-md">
@@ -1122,11 +1124,11 @@
                   <col class="col-w-md">
                   <col class="col-w-xxl">
                   <col class="col-w-sm">
-                  <col class="col-w-xxl">
+                  <col class="col-w-lg">
                   <col class="col-w-sm">
                   <col class="col-w-xxl">
-                  <col class="col-w-md">
-                  <col class="col-w-md">
+                  <col class="col-w-sm">
+                  <col class="col-w-sm">
                   <col class="col-w-md">
                   <col class="col-w-sm">
                   <col class="col-w-sm">
@@ -1344,7 +1346,19 @@
               </div>
               <div class="booking-grid-wrap">
                 <table class="booking-grid booking-grid-walmart" id="bookingGridTableWalmart">
-<thead><tr><th class="row-label">PO / Item</th>
+                <colgroup>
+                  <col class="col-w-sm">
+                  <col class="col-w-md">
+                  <col class="col-w-lg">
+                  <col class="col-w-xs">
+                  <col class="col-w-sm">
+                  <col class="col-w-sm">
+                  <col class="col-w-sm">
+                  <col class="col-w-xxl">
+                  <col class="col-w-md">
+                  <col class="col-w-sm">
+                </colgroup>
+<thead><tr>
 <th class="mandatory-head"><span class="mandatory-mark">*</span>P.O. Number<span class="th-sub">订单号码</span></th>
 <th class="mandatory-head"><span class="mandatory-mark">*</span>Vendor (Supplier) Model/Item No.<span class="th-sub">印刷在箱唛或产品或标签上的型号</span></th>
 <th class="mandatory-head"><span class="mandatory-mark">*</span>Product Description<span class="th-sub">产品描述</span></th>
@@ -1356,7 +1370,7 @@
 <th class="mandatory-head"><span class="mandatory-mark">*</span>UPC No. or Barcode for each Model<span class="th-sub">每个型号的条形码</span></th>
 <th class="mandatory-head"><span class="mandatory-mark">*</span>CY or CFS Shipment<span class="th-sub">装柜或散货</span></th>
 </tr></thead><tbody>
-<tr data-v2-row="wm-latg"><td class="row-label">7601224378 / AV18HSLATG</td>
+<tr data-v2-row="wm-latg">
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATG"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></div></td>
@@ -1368,7 +1382,7 @@
 <td class="mandatory-cell cell-wisteria"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">193969120001</span><span class="stack-line stack-forecast">193969120001</span></div><input class="mandatory-input" value="193969120001"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
 </tr>
-<tr data-v2-row="wm-latb"><td class="row-label">7601224378 / AV18HSLATB</td>
+<tr data-v2-row="wm-latb">
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATB"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Tiffany"></div></td>
@@ -1380,7 +1394,7 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123456"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
 </tr>
-<tr data-v2-row="wm-latw"><td class="row-label">7601224378 / AV18HSLATW</td>
+<tr data-v2-row="wm-latw">
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATW"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub White"></div></td>
@@ -1392,7 +1406,7 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123457"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
 </tr>
-<tr data-v2-row="wm-latr"><td class="row-label">7601224378 / AV18HSLATR</td>
+<tr data-v2-row="wm-latr">
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATR"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Red"></div></td>
@@ -1404,7 +1418,7 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123458"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
 </tr>
-<tr data-v2-row="wm-forecast-row"><td class="row-label">Forecast row · UPC added</td>
+<tr data-v2-row="wm-forecast-row">
 <td class="mandatory-cell cell-light-gold"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span><span class="stack-line stack-forecast">7601224399</span></div><input class="mandatory-input" value="7601224399"></div></td>
 <td class="mandatory-cell cell-light-gold"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span><span class="stack-line stack-forecast">AV18HSLATX</span></div><input class="mandatory-input" value="AV18HSLATX"></div></td>
 <td class="mandatory-cell cell-light-gold"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span><span class="stack-line stack-forecast">18KG Twin Tub Black</span></div><input class="mandatory-input" value="18KG Twin Tub Black"></div></td>
