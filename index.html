@@ -66,8 +66,8 @@
       border-radius: 2px;
       border: 1px solid rgba(0,0,0,.08);
     }
-    .legend-swatch.ok { background: #eaf6f2; }
-    .legend-swatch.changed { background: #fcf2e6; border-color: #fbbf24; }
+    .legend-swatch.ok { background: #fff; }
+    .legend-swatch.changed { background: #eaf6f2; border-color: #00a876; }
     .legend-swatch.diff { background: #fdefef; }
     .legend-swatch.ai { background: #eef3ff; }
     .legend-swatch.miss { background: #f3f4f6; }
@@ -91,13 +91,13 @@
       font-weight: 600;
       text-align: left;
     }
-    .excel-mock td.ok { background: #eaf6f2; }
+    .excel-mock td.ok { background: #fff; color: #191919; }
     .excel-mock td.diff { background: #fdefef; color: #9e141b; font-weight: 600; }
     .excel-mock td.changed {
-      background: #fcf2e6;
-      color: #b45309;
+      background: #eaf6f2;
+      color: #006648;
       font-weight: 600;
-      box-shadow: inset 0 0 0 1px #fbbf24;
+      box-shadow: inset 0 0 0 1px #00a876;
     }
     .excel-mock td.ai { background: #eef3ff; color: #1d4ed8; }
     .excel-mock td.miss { background: #f3f4f6; color: #737373; }
@@ -405,6 +405,7 @@
     }
     .action-bar--dock {
       flex-shrink: 0;
+      width: 100%;
       margin: 0;
       border-radius: 0;
       border: none;
@@ -412,6 +413,7 @@
       padding: 12px 20px;
       box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
       z-index: 10;
+      justify-content: flex-end;
     }
     .action-bar p { font-size: 12px; color: #737373; max-width: 520px; }
 
@@ -574,23 +576,26 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 11px;
-      table-layout: auto;
-      min-width: 1100px;
+      table-layout: fixed;
+      min-width: 3200px;
     }
     .booking-grid th,
     .booking-grid td {
       border: 1px solid #dde1e6;
-      padding: 6px 8px;
-      vertical-align: top;
-      min-width: 88px;
+      padding: 0;
+      vertical-align: bottom;
+      min-width: 72px;
     }
     .booking-grid thead th {
+      padding: 8px 8px 6px;
       background: #f3f4f8;
       color: #474747;
       font-weight: 600;
       text-align: left;
       line-height: 1.35;
+      vertical-align: top;
     }
+    .booking-grid .grid-head { background: #f8f9fb; }
     .booking-grid .th-sub {
       display: block;
       font-size: 10px;
@@ -615,35 +620,58 @@
       background: #fafafb;
       color: #6a7282;
       font-weight: 600;
-      min-width: 140px;
+      min-width: 148px;
+      width: 148px;
       white-space: nowrap;
+      padding: 8px;
+      vertical-align: middle;
     }
-    .mandatory-cell { position: relative; }
+    .mandatory-cell,
+    .grid-cell { position: relative; }
+    .grid-cell.cell-ok { background: #fff; }
     .mandatory-cell.cell-ok { background: #eaf6f2; }
-    .mandatory-cell.cell-conflict { background: #fdefef; }
-    .mandatory-cell.cell-ai { background: #eef3ff; }
-    .mandatory-cell.cell-miss { background: #f3f4f6; }
-    .mandatory-cell.cell-default { background: #fffbeb; }
-    .mandatory-cell.cell-mandatory-warn { background: #ffedd5; }
+    .mandatory-cell-inner {
+      display: flex;
+      flex-direction: column;
+      height: 68px;
+      padding: 6px 8px;
+      box-sizing: border-box;
+    }
     .cell-stack {
+      flex: 1 1 auto;
+      min-height: 30px;
+      max-height: 30px;
       margin-bottom: 4px;
       font-size: 10px;
-      line-height: 1.35;
+      line-height: 15px;
+      overflow: hidden;
     }
     .stack-line { display: block; }
+    .stack-line.stack-placeholder {
+      height: 15px;
+      visibility: hidden;
+    }
     .stack-supplier { color: #191919; }
     .stack-ai { color: #155DFB; font-weight: 600; }
     .stack-forecast { color: #00a876; font-weight: 600; }
     .stack-miss { color: #9ca3af; }
+    .mandatory-cell.cell-conflict { background: #fdefef; }
+    .mandatory-cell.cell-ai { background: #eef3ff; }
+    .mandatory-cell.cell-miss { background: #f3f4f6; }
+    .mandatory-cell.cell-default { background: #fffbeb; }
+    .mandatory-cell    .cell-mandatory-warn { background: #ffedd5; }
     .mandatory-input {
       width: 100%;
-      min-width: 72px;
+      min-width: 0;
+      height: 28px;
       border: 1px solid rgba(0,0,0,.12);
       border-radius: 3px;
       padding: 4px 6px;
       font-size: 11px;
       font-weight: 600;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.92);
+      box-sizing: border-box;
+      flex-shrink: 0;
     }
     .mandatory-input:focus {
       outline: none;
@@ -804,9 +832,9 @@
                 </div>
               </div>
 
-              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="cartons">
+              <div class="maisa-section maisa-card-bg maisa-collapse-card" data-column="cartons">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
-                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="true">
                     <span class="maisa-section-title">Carton(s) · 2 flagged rows</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
@@ -863,9 +891,9 @@
                 </div>
               </div>
 
-              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="upc">
+              <div class="maisa-section maisa-card-bg maisa-collapse-card" data-column="upc">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
-                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="true">
                     <span class="maisa-section-title">UPC No. or Barcode · 1 flagged row</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
@@ -904,9 +932,9 @@
                 </div>
               </div>
 
-              <div class="maisa-section maisa-card-bg maisa-collapse-card is-collapsed" data-column="gross-weight">
+              <div class="maisa-section maisa-card-bg maisa-collapse-card" data-column="gross-weight">
                 <div class="maisa-section-header maisa-section-border_bottom maisa-padding_bottom">
-                  <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                  <button type="button" class="maisa-collapse-toggle" aria-expanded="true">
                     <span class="maisa-section-title">Gross Weight · 1 flagged row</span>
                     <span class="maisa-collapse-caret" aria-hidden="true"></span>
                   </button>
@@ -957,7 +985,7 @@
                   Mandatory grid editor · V2
                 </span>
               </div>
-              <p style="font-size:12px;color:#737373;margin-bottom:10px;">Shows all columns marked with <span class="mandatory-mark">!</span>. Cell colors indicate comparison status; edit final values directly in the inputs.</p>
+              <p style="font-size:12px;color:#737373;margin-bottom:10px;">Columns follow the Walmart <strong>QIMA - GENERAL BOOKING FORMAT</strong> sheet (Client → Remarks). Cells marked with <span class="mandatory-mark">!</span> are mandatory. Supplier / AI comparison hints sit above each input; inputs align on one row.</p>
               <div class="v2-legend" aria-label="Diff legend">
                 <div class="v2-legend__title">Diff Excel color legend</div>
                 <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eaf6f2"></span><span><strong>Green</strong> — Match (both sides / all three agree)</span></div>
@@ -969,108 +997,179 @@
               </div>
               <div class="booking-grid-wrap">
                 <table class="booking-grid" id="bookingGridTable">
-                  <thead>
-                    <tr>
-                      <th class="row-label">PO / Item</th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>P.O. Number<span class="th-sub">PO number</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Vendor Model<span class="th-sub">Model</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Product Description<span class="th-sub">Description</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Pallets<span class="th-sub">Pallets</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Carton(s)<span class="th-sub">Cartons</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Total Pcs<span class="th-sub">Total pcs</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Containers<span class="th-sub">Containers</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>Material<span class="th-sub">Material</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>UPC / Barcode<span class="th-sub">Barcode</span></th>
-                      <th class="mandatory-head"><span class="mandatory-mark">!</span>CY / CFS<span class="th-sub">CY or CFS</span></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr data-v2-row="latg">
-                      <td class="row-label">7601224378 / AV18HSLATG</td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATG"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></td>
-                      <td class="mandatory-cell cell-default">
-                        <div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div>
-                        <input class="mandatory-input" value="NO">
-                      </td>
-                      <td class="mandatory-cell cell-conflict">
-                        <div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,629</span></div>
-                        <input class="mandatory-input" value="1,629">
-                      </td>
-                      <td class="mandatory-cell cell-conflict">
-                        <div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,736</span></div>
-                        <input class="mandatory-input" value="1,736">
-                      </td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
-                      <td class="mandatory-cell cell-ai">
-                        <div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">193969120001</span></div>
-                        <input class="mandatory-input" value="193969120001">
-                      </td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
-                    </tr>
-                    <tr data-v2-row="latb">
-                      <td class="row-label">7601224378 / AV18HSLATB</td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATB"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Tiffany"></td>
-                      <td class="mandatory-cell cell-default"><input class="mandatory-input" value="NO"></td>
-                      <td class="mandatory-cell cell-conflict">
-                        <div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div>
-                        <input class="mandatory-input" value="1,024">
-                      </td>
-                      <td class="mandatory-cell cell-conflict">
-                        <div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div>
-                        <input class="mandatory-input" value="1,024">
-                      </td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123456"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
-                    </tr>
-                    <tr data-v2-row="latw">
-                      <td class="row-label">7601224378 / AV18HSLATW</td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATW"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub White"></td>
-                      <td class="mandatory-cell cell-miss">
-                        <div class="cell-stack"><span class="stack-line stack-supplier">NO</span><span class="stack-line stack-miss">—</span></div>
-                        <input class="mandatory-input" value="NO">
-                      </td>
-                      <td class="mandatory-cell cell-ai">
-                        <div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">640</span></div>
-                        <input class="mandatory-input" value="640">
-                      </td>
-                      <td class="mandatory-cell cell-mandatory-warn">
-                        <div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div>
-                        <input class="mandatory-input" value="640" placeholder="Required">
-                      </td>
-                      <td class="mandatory-cell cell-default"><input class="mandatory-input" value="1"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123457"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
-                    </tr>
-                    <tr data-v2-row="latr">
-                      <td class="row-label">7601224378 / AV18HSLATR</td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="7601224378"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="AV18HSLATR"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="18KG Twin Tub Red"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="NO"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="420"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="420"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="1"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="Plastic PP 54.8%"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="193969123458"></td>
-                      <td class="mandatory-cell cell-ok"><input class="mandatory-input" value="CY"></td>
-                    </tr>
-                  </tbody>
+<thead><tr>
+<th class="row-label">PO / Item</th>
+<th class="grid-head">Client<span class="th-sub">客户</span></th>
+<th class="grid-head">Supplier<span class="th-sub">供应商</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>P.O. Number<span class="th-sub">订单号码</span></th>
+<th class="grid-head">Lot / Series<span class="th-sub">批次号/序列号</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Vendor (Supplier) Model/Item No.<span class="th-sub">印刷在箱唛或产品或标签上的型号</span></th>
+<th class="grid-head">Other Item No.<span class="th-sub">其它形式的型号</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Product Description<span class="th-sub">产品描述</span></th>
+<th class="grid-head">Item&#x27;s Brand<span class="th-sub">品牌商标</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Pallets<span class="th-sub">是否有托盘</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Carton(s)<span class="th-sub">箱数</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Total Pcs<span class="th-sub">总件数</span></th>
+<th class="grid-head">Pcs / CTNs<span class="th-sub">每箱件数/套数</span></th>
+<th class="grid-head">pcs / sets <span class="th-sub">*if applicable</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>How Many Containers<span class="th-sub">几个柜子</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>Material Composition (by percentage)<span class="th-sub">必写产品材料（百分比）</span></th>
+<th class="grid-head">Has Serial No. or not? If yes, pls. write the Serial No. Range.<span class="th-sub">是否有序列号？如果有的话，请务必提供序列号范围</span></th>
+<th class="grid-head">Works with batteries? If yes, how many PCS of batteries for each product, included or not?<span class="th-sub">是否使用电池工作？如果使用：需使用几节，是否包含在内？</span></th>
+<th class="grid-head">Spanish/English Warranty (YES or NO)<span class="th-sub">是否有西班牙语或英语保修卡</span></th>
+<th class="grid-head">Spanish/English Instruction Manual (YES or NO)<span class="th-sub">是否有西班牙语或英语说明书</span></th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>UPC No. or Barcode for each Model<span class="th-sub">每个型号的条形码</span></th>
+<th class="grid-head">Additional goods (gifts,spare parts, samples, empty boxes, wooden, paper, MDF) 附加商品（礼品,备品,样品,空彩盒,实木,纸质,MDF）</th>
+<th class="mandatory-head"><span class="mandatory-mark">!</span>CY or CFS Shipment<span class="th-sub">装柜或散货</span></th>
+<th class="grid-head">Factory (In Chinese and English)<span class="th-sub">工厂（中英文）</span></th>
+<th class="grid-head">Country of Origin<span class="th-sub"> 原产国</span></th>
+<th class="grid-head">Loading Place (In Chinese and English)<span class="th-sub">装柜地址（中英文）</span></th>
+<th class="grid-head">Contact Person<span class="th-sub">工厂联系人</span></th>
+<th class="grid-head">Contact No.:<span class="th-sub">Telephone No. &amp; Cellphone No.(neccessary)</span></th>
+<th class="grid-head">Email<span class="th-sub">邮箱</span></th>
+<th class="grid-head">Province<span class="th-sub">省 （验货工厂所在）</span></th>
+<th class="grid-head">City<span class="th-sub"> 市 （验货工厂所在）</span></th>
+<th class="grid-head">Remarks<span class="th-sub">备注</span></th>
+</tr></thead><tbody>
+<tr data-v2-row="latg"><td class="row-label">7601224378 / AV18HSLATG</td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATG"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
+<td class="mandatory-cell cell-default"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,629</span></div><input class="mandatory-input" value="1,629"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,736</span></div><input class="mandatory-input" value="1,736"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic： / PP 54.8% / ABS 10.0% /  / Metal： / Iron 25.6% / aluminium 2.6% / Copper 0.7% /  / Others：6.3%"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="mandatory-cell cell-ai"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">193969120001</span></div><input class="mandatory-input" value="193969120001"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD / 滁州韩上电器有限公司"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHINA"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="No.555 Changjiang Road Chuzhou Economic Development Area Province China / 安徽省滁州市城东工业区长江东路555号"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="王德荣"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="181 5505 8013"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ANHUI"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+</tr>
+<tr data-v2-row="latb"><td class="row-label">7601224378 / AV18HSLATB</td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATB"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Tiffany"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic： / PP 54.8% / ABS 10.0% /  / Metal： / Iron 25.6% / aluminium 2.6% / Copper 0.7% /  / Others：6.3%"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123456"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD / 滁州韩上电器有限公司"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHINA"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="No.555 Changjiang Road Chuzhou Economic Development Area Province China / 安徽省滁州市城东工业区长江东路555号"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="王德荣"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="181 5505 8013"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ANHUI"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+</tr>
+<tr data-v2-row="latw"><td class="row-label">7601224378 / AV18HSLATW</td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATW"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub White"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">NO</span><span class="stack-line stack-miss">—</span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ai"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">640</span></div><input class="mandatory-input" value="640"></div></td>
+<td class="mandatory-cell cell-mandatory-warn"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div><input class="mandatory-input" value="640"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic： / PP 54.8% / ABS 10.0% /  / Metal： / Iron 25.6% / aluminium 2.6% / Copper 0.7% /  / Others：6.3%"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123457"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD / 滁州韩上电器有限公司"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHINA"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="No.555 Changjiang Road Chuzhou Economic Development Area Province China / 安徽省滁州市城东工业区长江东路555号"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="王德荣"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="181 5505 8013"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ANHUI"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+</tr>
+<tr data-v2-row="latr"><td class="row-label">7601224378 / AV18HSLATR</td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="7601224378"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATR"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="/"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Red"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="420"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="420"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic： / PP 54.8% / ABS 10.0% /  / Metal： / Iron 25.6% / aluminium 2.6% / Copper 0.7% /  / Others：6.3%"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="YES"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123458"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
+<td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CY"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU HANSHANG ELECTRICAL APPLIANCES CO.,LTD / 滁州韩上电器有限公司"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHINA"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="No.555 Changjiang Road Chuzhou Economic Development Area Province China / 安徽省滁州市城东工业区长江东路555号"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="王德荣"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="181 5505 8013"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ANHUI"></div></td>
+<td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="CHUZHOU"></div></td>
+<td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
+</tr>
+</tbody>
+
                 </table>
               </div>
             </div>
           </div>
 
-        </div>
         </div>
         </div>
         <div class="action-bar action-bar--dock">
@@ -1100,7 +1199,7 @@
         <button type="button" class="excel-modal__close" data-close-modal aria-label="Close">×</button>
       </div>
       <div class="excel-modal__body">
-        <p class="excel-modal__note">Review the Excel content below. On confirm, it will update the Booking order. <strong>Orange highlight</strong> indicates a change from the Booking original.</p>
+        <p class="excel-modal__note">Review the Excel content below. On confirm, it will update the Booking order. <strong>Green highlight</strong> indicates a change from the Booking original.</p>
         <div class="legend" aria-label="Color legend">
           <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
           <span class="legend-item"><span class="legend-swatch changed"></span>Changed</span>
@@ -1154,11 +1253,38 @@
         });
       });
 
+      function normalizeCellValue(value) {
+        var normalized = (value || '').replace(/,/g, '').trim();
+        return normalized === 'Blank' ? '' : normalized;
+      }
+
+      function syncInputStyle(input) {
+        if (!input) return;
+        var value = normalizeCellValue(input.value);
+        var original = normalizeCellValue(input.dataset.original);
+        var ai = normalizeCellValue(input.dataset.ai);
+        input.classList.remove('accepted', 'edited');
+        if (value && value === ai) {
+          input.classList.add('accepted');
+        } else if (value === original && original !== ai) {
+          input.classList.add('edited');
+        } else if (value && value !== original && value !== ai) {
+          input.classList.add('edited');
+        }
+      }
+
+      function preserveRowConfirmation(row) {
+        if (row && row.classList.contains('is-confirmed')) {
+          setRowConfirmed(row, true);
+        }
+      }
+
       function applyValue(input, mode) {
+        var row = input.closest('tr');
         var value = mode === 'original' ? input.dataset.original : input.dataset.ai;
         input.value = value || 'Blank';
-        input.classList.toggle('accepted', mode === 'ai');
-        input.classList.toggle('edited', mode === 'original' && input.dataset.original !== input.dataset.ai);
+        syncInputStyle(input);
+        preserveRowConfirmation(row);
       }
 
       document.querySelectorAll('.toggle-group').forEach(function (group) {
@@ -1167,7 +1293,8 @@
           if (!btn) return;
           group.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
-          var input = group.closest('tr').querySelector('.final-input');
+          var row = group.closest('tr');
+          var input = row.querySelector('.final-input');
           applyValue(input, btn.dataset.use);
         });
       });
@@ -1175,14 +1302,17 @@
       document.querySelectorAll('[data-accept-column]').forEach(function (button) {
         button.addEventListener('click', function () {
           var column = button.closest('[data-column]');
-          column.querySelectorAll('.final-input').forEach(function (input) {
+          column.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (row) {
+            var input = row.querySelector('.final-input');
+            if (!input) return;
             applyValue(input, 'ai');
-            var group = input.closest('tr').querySelector('.toggle-group');
+            var group = row.querySelector('.toggle-group');
             if (group) {
               group.querySelectorAll('button').forEach(function (b) {
                 b.classList.toggle('active', b.dataset.use === 'ai');
               });
             }
+            setRowConfirmed(row, true);
           });
         });
       });
@@ -1190,15 +1320,26 @@
       document.querySelectorAll('[data-reset-column]').forEach(function (button) {
         button.addEventListener('click', function () {
           var column = button.closest('[data-column]');
-          column.querySelectorAll('.final-input').forEach(function (input) {
+          column.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (row) {
+            var input = row.querySelector('.final-input');
+            if (!input) return;
             applyValue(input, 'original');
-            var group = input.closest('tr').querySelector('.toggle-group');
+            var group = row.querySelector('.toggle-group');
             if (group) {
               group.querySelectorAll('button').forEach(function (b) {
                 b.classList.toggle('active', b.dataset.use === 'original');
               });
             }
+            preserveRowConfirmation(row);
           });
+        });
+      });
+
+      document.querySelectorAll('.final-input').forEach(function (input) {
+        syncInputStyle(input);
+        input.addEventListener('input', function () {
+          syncInputStyle(input);
+          preserveRowConfirmation(input.closest('tr'));
         });
       });
 
