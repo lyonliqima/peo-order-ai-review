@@ -9,4 +9,4 @@
 ## Preview
 
 - GitHub Pages: https://lyonliqima.github.io/peo-order-ai-review/
-- Vercel: deploy after linking this repo
+- Vercel: https://qima-pm-agent.vercel.app
