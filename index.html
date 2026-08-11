@@ -708,11 +708,12 @@
     }
     .booking-grid-wrap.optional-columns-hidden col.col-grid {
       width: 0 !important;
-      visibility: collapse;
+      max-width: 0 !important;
     }
     .booking-grid-wrap.optional-columns-hidden .booking-grid {
       width: 100%;
       min-width: max-content;
+      table-layout: auto;
     }
     .v2-panel-toolbar {
       display: flex;
@@ -761,6 +762,10 @@
       line-height: 1.35;
       vertical-align: top;
       overflow-wrap: anywhere;
+      height: auto;
+    }
+    .booking-grid thead th.mandatory-head {
+      min-width: 72px;
     }
     .booking-grid .grid-head { background: #f8f9fb; }
     .booking-grid .th-sub {
@@ -793,6 +798,7 @@
     }
     .mandatory-cell,
     .grid-cell { position: relative; }
+    .mandatory-cell { min-width: 72px; }
     .grid-cell.cell-ok { background: #fff; }
     .mandatory-cell.cell-ok { background: #fff; }
     .mandatory-cell-inner {
