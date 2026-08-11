@@ -23,6 +23,28 @@
 
     .page-shell { min-height: 100vh; padding: 12px; }
 
+    .demo-app-header {
+      display: flex;
+      align-items: center;
+      padding: 4px 4px 12px;
+    }
+    .demo-app-brand {
+      display: inline-flex;
+      align-items: center;
+      line-height: 0;
+      text-decoration: none;
+    }
+    .demo-app-brand:focus-visible {
+      outline: 2px solid #4169e1;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    .demo-app-logo {
+      display: block;
+      height: 28px;
+      width: auto;
+    }
+
     .maisa-split-layout {
       display: flex;
       width: 100%;
@@ -498,6 +520,63 @@
       border-top: 1px solid #dde1e6;
       background: #fff;
     }
+    .confirm-popover-anchor {
+      position: relative;
+    }
+    .confirm-popover {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 10px);
+      width: 300px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #153184;
+      color: #f2f5fd;
+      box-shadow: 0 12px 28px rgba(21, 49, 132, 0.32);
+      z-index: 6;
+    }
+    .confirm-popover::after {
+      content: '';
+      position: absolute;
+      right: 28px;
+      bottom: -5px;
+      width: 10px;
+      height: 10px;
+      background: #153184;
+      transform: rotate(45deg);
+    }
+    .confirm-popover.is-hidden {
+      display: none;
+    }
+    .confirm-popover__title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .confirm-popover__text {
+      font-size: 11px;
+      line-height: 1.45;
+      color: #d3dcf8;
+      margin-bottom: 10px;
+    }
+    .confirm-popover__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .confirm-popover__actions .btn {
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+    .confirm-popover__actions .btn:not(.primary) {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #fff;
+    }
+    .confirm-popover__actions .btn:not(.primary):hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
     .excel-modal__note {
       margin-bottom: 12px;
       padding: 8px 12px;
@@ -550,9 +629,6 @@
 
     .v2-panel { margin-bottom: 15px; }
     .v2-legend {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 8px 16px;
       margin-bottom: 12px;
       padding: 12px 14px;
       border: 1px solid #dde1e6;
@@ -561,12 +637,22 @@
       font-size: 11px;
       color: #474747;
     }
+    .v2-legend.maisa-collapse-card .maisa-collapse-toggle {
+      width: 100%;
+    }
+    .v2-legend.maisa-collapse-card.is-collapsed {
+      padding-bottom: 12px;
+    }
+    .v2-legend__items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-top: 10px;
+    }
     .v2-legend__title {
-      grid-column: 1 / -1;
       font-size: 12px;
       font-weight: 700;
       color: #191919;
-      margin-bottom: 4px;
     }
     .v2-walmart-legend {
       margin-bottom: 12px;
@@ -589,8 +675,8 @@
     }
     .walmart-forecast-banner { margin-bottom: 12px; }
     .booking-grid-walmart {
-      width: max-content;
-      min-width: 0;
+      width: 100%;
+      min-width: max-content;
     }
     .booking-grid-walmart .walmart-cell-inner {
       height: 90px;
@@ -601,7 +687,7 @@
       margin-bottom: 4px;
     }
     .mandatory-cell.cell-caramel { background: #fde9d9; }
-    .mandatory-cell.cell-jade { background: #d9f2e6; }
+    .mandatory-cell.cell-jade { background: #fff; }
     .mandatory-cell.cell-wisteria { background: #ebe4f5; }
     .mandatory-cell.cell-peach { background: #ffe8d6; }
     .mandatory-cell.cell-steel { background: #dbeafe; }
@@ -620,9 +706,13 @@
     .booking-grid-wrap.optional-columns-hidden .grid-cell {
       display: none;
     }
+    .booking-grid-wrap.optional-columns-hidden col.col-grid {
+      width: 0 !important;
+      visibility: collapse;
+    }
     .booking-grid-wrap.optional-columns-hidden .booking-grid {
-      width: max-content;
-      min-width: 0;
+      width: 100%;
+      min-width: max-content;
     }
     .v2-panel-toolbar {
       display: flex;
@@ -638,7 +728,8 @@
       overflow: auto;
     }
     .booking-grid {
-      width: max-content;
+      width: 100%;
+      min-width: max-content;
       max-width: none;
       border-collapse: collapse;
       font-size: 11px;
@@ -657,6 +748,10 @@
     .booking-grid col.col-w-lg { width: 152px; }
     .booking-grid col.col-w-xl { width: 200px; }
     .booking-grid col.col-w-xxl { width: 280px; }
+    .booking-grid col.col-w-flex {
+      width: auto;
+      min-width: 96px;
+    }
     .booking-grid thead th {
       padding: 8px 8px 6px;
       background: #f3f4f8;
@@ -699,7 +794,7 @@
     .mandatory-cell,
     .grid-cell { position: relative; }
     .grid-cell.cell-ok { background: #fff; }
-    .mandatory-cell.cell-ok { background: #eaf6f2; }
+    .mandatory-cell.cell-ok { background: #fff; }
     .mandatory-cell-inner {
       display: flex;
       flex-direction: column;
@@ -748,6 +843,35 @@
       border-color: #155DFB;
       background: #fff;
       box-shadow: 0 0 0 2px rgba(21, 93, 251, 0.15);
+    }
+    .mandatory-cell-inner.has-long-text {
+      height: auto;
+      min-height: 72px;
+      max-height: 132px;
+    }
+    .mandatory-cell-inner.has-long-text .cell-stack {
+      flex: 0 0 auto;
+      min-height: 24px;
+      max-height: 24px;
+    }
+    .mandatory-input.is-long-text,
+    .mandatory-input.mandatory-textarea {
+      height: auto;
+      min-height: 44px;
+      max-height: 80px;
+      line-height: 1.35;
+      resize: vertical;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .mandatory-cell.has-long-content {
+      min-width: 260px;
+    }
+    .booking-grid-walmart .mandatory-cell-inner.has-long-text {
+      min-height: 90px;
+      max-height: 148px;
     }
     .cell-conflict .mandatory-input { border-color: #f5c2c7; }
     .cell-mandatory-warn .mandatory-input { border-color: #fdba74; }
@@ -799,6 +923,11 @@
 </head>
 <body>
   <div class="page-shell">
+    <header class="demo-app-header">
+      <a class="demo-app-brand" href="https://www.qima.com/" target="_blank" rel="noopener noreferrer" aria-label="QIMA">
+        <img class="demo-app-logo" src="icons/qima-logo.svg" alt="QIMA" width="126" height="28">
+      </a>
+    </header>
     <div class="maisa-split-layout" id="maisaSplitLayout">
 <div class="maisa-split-pane maisa-split-pane-left" id="maisaLeftPane">
         <div class="maisa-left-scroll">
@@ -830,7 +959,7 @@
               <div class="summary-card conflict"><div class="num">13</div><div class="lbl">Conflicts</div></div>
               <div class="summary-card warn"><div class="num">12</div><div class="lbl">AI added</div></div>
               <div class="summary-card conflict"><div class="num">50</div><div class="lbl">AI missing</div></div>
-              <div class="summary-card"><div class="num">4</div><div class="lbl">Flagged columns</div></div>
+              <div class="summary-card conflict"><div class="num" id="unmatched-rows-count">3</div><div class="lbl">Unmatched rows</div></div>
             </div>
           </div>
 
@@ -877,15 +1006,15 @@
                           <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
-                          <td>1,736</td>
-                          <td>1,736</td>
+                          <td>1736</td>
+                          <td>1736</td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
                               <button type="button" data-use="original">Orig.</button>
                             </span>
                           </td>
-                          <td><input class="final-input" value="1,736" data-original="868" data-ai="1,736"></td>
+                          <td><input class="final-input" value="1736" data-original="868" data-ai="1736"></td>
                           <td class="maisa-col-action">
                             <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -896,15 +1025,15 @@
                           <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
-                          <td>1,024</td>
-                          <td>1,024</td>
+                          <td>1024</td>
+                          <td>1024</td>
                           <td>
                             <span class="toggle-group">
                               <button type="button" class="active" data-use="ai">AI</button>
                               <button type="button" data-use="original">Orig.</button>
                             </span>
                           </td>
-                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
+                          <td><input class="final-input" value="1024" data-original="512" data-ai="1024"></td>
                           <td class="maisa-col-action">
                             <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -967,9 +1096,9 @@
                           <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATG</td>
                           <td>868</td>
-                          <td>1,629</td>
-                          <td>1,629</td>
-                          <td><input class="final-input" value="1,629" data-original="868" data-ai="1,629"></td>
+                          <td>1629</td>
+                          <td>1629</td>
+                          <td><input class="final-input" value="1629" data-original="868" data-ai="1629"></td>
                           <td class="maisa-col-action">
                             <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -980,9 +1109,9 @@
                           <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
                           <td>512</td>
-                          <td>1,024</td>
-                          <td>1,024</td>
-                          <td><input class="final-input" value="1,024" data-original="512" data-ai="1,024"></td>
+                          <td>1024</td>
+                          <td>1024</td>
+                          <td><input class="final-input" value="1024" data-original="512" data-ai="1024"></td>
                           <td class="maisa-col-action">
                             <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1061,10 +1190,10 @@
                         <tr>
                           <td><span class="status-tag conflict" data-kind="conflict" data-label="Conflict">Conflict</span></td>
                           <td class="maisa-col-label">7601224378 / AV18HSLATB</td>
-                          <td>7,820</td>
-                          <td>8,160</td>
-                          <td>8,160</td>
-                          <td><input class="final-input" value="8,160" data-original="7,820" data-ai="8,160"></td>
+                          <td>7820</td>
+                          <td>8160</td>
+                          <td>8160</td>
+                          <td><input class="final-input" value="8160" data-original="7820" data-ai="8160"></td>
                           <td class="maisa-col-action">
                             <button type="button" class="row-confirm-btn" aria-label="Confirm row" title="Confirm">
                               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1086,53 +1215,59 @@
               <div class="v2-panel-toolbar">
                 <span class="maisa-section-title">
                   <img class="maisa-section-icon" src="icons/container.svg" alt="" width="20" height="20">
-                  Mandatory grid editor · V2
+                  Mandatory grid editor
                 </span>
                 <button type="button" class="btn" id="btnToggleOptionalColumns" aria-pressed="false">Show optional columns</button>
               </div>
-              <div class="v2-legend" aria-label="Diff legend">
-                <div class="v2-legend__title">Diff Excel color legend</div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eaf6f2"></span><span><strong>Green</strong> — Match (both sides / all three agree)</span></div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Conflict: black supplier vs blue AI (Walmart adds green forecast)</span></div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eef3ff"></span><span><strong>Light blue</strong> — AI has value, supplier missing</span></div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#f3f4f6"></span><span><strong>Grey</strong> — Supplier has value, AI not extracted</span></div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fffbeb"></span><span><strong>Yellow</strong> — Missing both sides, business default applied</span></div>
-                <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ffedd5"></span><span><strong>Orange</strong> — Mandatory field empty with no default</span></div>
+              <div class="v2-legend maisa-collapse-card is-collapsed" aria-label="Diff legend">
+                <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                  <span class="v2-legend__title">Diff Excel color legend</span>
+                  <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                </button>
+                <div class="maisa-collapse-body">
+                  <div class="v2-legend__items">
+                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Conflict: black supplier vs blue AI (Walmart adds green forecast)</span></div>
+                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eef3ff"></span><span><strong>Light blue</strong> — AI has value, supplier missing</span></div>
+                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#f3f4f6"></span><span><strong>Grey</strong> — Supplier has value, AI not extracted</span></div>
+                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fffbeb"></span><span><strong>Yellow</strong> — Missing both sides, business default applied</span></div>
+                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ffedd5"></span><span><strong>Orange</strong> — Mandatory field empty with no default</span></div>
+                  </div>
+                </div>
               </div>
               <div class="booking-grid-wrap optional-columns-hidden" id="bookingGridWrap">
                 <table class="booking-grid" id="bookingGridTable">
                 <colgroup>
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-md">
-                  <col class="col-w-sm">
-                  <col class="col-w-lg">
-                  <col class="col-w-sm">
-                  <col class="col-w-xs">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-xxl">
-                  <col class="col-w-xxl">
-                  <col class="col-w-xxl">
-                  <col class="col-w-lg">
-                  <col class="col-w-lg">
-                  <col class="col-w-md">
-                  <col class="col-w-xxl">
-                  <col class="col-w-sm">
-                  <col class="col-w-lg">
-                  <col class="col-w-sm">
-                  <col class="col-w-xxl">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-md">
-                  <col class="col-w-sm">
-                  <col class="col-w-sm">
-                  <col class="col-w-md">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-mandatory col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-mandatory col-w-md">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-mandatory col-w-lg">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-mandatory col-w-xs">
+                  <col class="col-mandatory col-w-sm">
+                  <col class="col-mandatory col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-mandatory col-w-sm">
+                  <col class="col-mandatory col-w-xxl">
+                  <col class="col-grid col-w-xxl">
+                  <col class="col-grid col-w-xxl">
+                  <col class="col-grid col-w-lg">
+                  <col class="col-grid col-w-lg">
+                  <col class="col-mandatory col-w-md">
+                  <col class="col-grid col-w-xxl">
+                  <col class="col-mandatory col-w-sm">
+                  <col class="col-grid col-w-lg">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-xxl">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-md">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-sm">
+                  <col class="col-grid col-w-md col-w-flex">
                 </colgroup>
 <thead><tr>
 <th class="grid-head">Client<span class="th-sub">客户</span></th>
@@ -1177,8 +1312,8 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></div></td>
 <td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
 <td class="mandatory-cell cell-default"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div><input class="mandatory-input" value="NO"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,629</span></div><input class="mandatory-input" value="1,629"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,736</span></div><input class="mandatory-input" value="1,736"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1629</span></div><input class="mandatory-input" value="1629"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1736</span></div><input class="mandatory-input" value="1736"></div></td>
 <td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
 <td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
@@ -1210,8 +1345,8 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Tiffany"></div></td>
 <td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="ATVIO HOME"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1024</span></div><input class="mandatory-input" value="1024"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1024</span></div><input class="mandatory-input" value="1024"></div></td>
 <td class="grid-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
 <td class="grid-cell cell-miss"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value=""></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner"><div class="cell-stack"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
@@ -1321,7 +1456,6 @@
                 <div class="v2-walmart-legend__section">
                   <div class="v2-legend__title">Cell colours — supplier vs PL/LP AI</div>
                   <div class="v2-legend v2-legend--inline">
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eaf6f2"></span><span><strong>Green</strong> — Both agree</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Conflict (black supplier + blue AI)</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eef3ff"></span><span><strong>Light blue</strong> — AI only</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#f3f4f6"></span><span><strong>Grey</strong> — Supplier only</span></div>
@@ -1332,10 +1466,8 @@
                 <div class="v2-walmart-legend__section">
                   <div class="v2-legend__title">Walmart — with booking forecast (PO / item # / UPC)</div>
                   <div class="v2-legend v2-legend--inline">
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eaf6f2"></span><span><strong>Green</strong> — All three agree</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Any conflict (black + blue + green)</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fde9d9"></span><span><strong>Caramel</strong> — Missing AI, supplier + forecast agree</span></div>
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#d9f2e6"></span><span><strong>Jade</strong> — Missing forecast, supplier + AI agree</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ebe4f5"></span><span><strong>Wisteria</strong> — Missing supplier, AI + forecast agree</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ffe8d6"></span><span><strong>Peach</strong> — Only supplier</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#dbeafe"></span><span><strong>Steel blue</strong> — Only AI</span></div>
@@ -1356,7 +1488,7 @@
                   <col class="col-w-sm">
                   <col class="col-w-xxl">
                   <col class="col-w-md">
-                  <col class="col-w-sm">
+                  <col class="col-w-sm col-w-flex">
                 </colgroup>
 <thead><tr>
 <th class="mandatory-head"><span class="mandatory-mark">*</span>P.O. Number<span class="th-sub">订单号码</span></th>
@@ -1375,8 +1507,8 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATG"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Glass Lid"></div></td>
 <td class="mandatory-cell cell-default"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span><span class="stack-line stack-miss">—</span></div><input class="mandatory-input" value="NO"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,629</span><span class="stack-line stack-forecast">1,600</span></div><input class="mandatory-input" value="1,629"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1,736</span><span class="stack-line stack-forecast">1,736</span></div><input class="mandatory-input" value="1,736"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1629</span><span class="stack-line stack-forecast">1600</span></div><input class="mandatory-input" value="1629"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">868</span><span class="stack-line stack-ai">1736</span><span class="stack-line stack-forecast">1736</span></div><input class="mandatory-input" value="1736"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic PP 54.8%"></div></td>
 <td class="mandatory-cell cell-wisteria"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-miss">Blank</span><span class="stack-line stack-ai">193969120001</span><span class="stack-line stack-forecast">193969120001</span></div><input class="mandatory-input" value="193969120001"></div></td>
@@ -1387,8 +1519,8 @@
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="AV18HSLATB"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="18KG Twin Tub Tiffany"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="NO"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span><span class="stack-line stack-forecast">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
-<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1,024</span><span class="stack-line stack-forecast">1,024</span></div><input class="mandatory-input" value="1,024"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1024</span><span class="stack-line stack-forecast">1024</span></div><input class="mandatory-input" value="1024"></div></td>
+<td class="mandatory-cell cell-conflict"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-supplier">512</span><span class="stack-line stack-ai">1024</span><span class="stack-line stack-forecast">1024</span></div><input class="mandatory-input" value="1024"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="1"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="Plastic PP 54.8%"></div></td>
 <td class="mandatory-cell cell-ok"><div class="mandatory-cell-inner walmart-cell-inner"><div class="cell-stack cell-stack--triple"><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span><span class="stack-line stack-placeholder" aria-hidden="true"></span></div><input class="mandatory-input" value="193969123456"></div></td>
@@ -1442,7 +1574,7 @@
         <div class="action-bar action-bar--dock">
           <div class="btn-row">
             <button type="button" class="btn">Download diff Excel</button>
-            <button type="button" class="btn">Export final Excel</button>
+            <button type="button" class="btn">Export AI-generated Excel</button>
             <button type="button" class="btn primary" id="btnUpdateOrder">Update order</button>
           </div>
         </div>
@@ -1477,12 +1609,10 @@
             <thead>
               <tr>
                 <th style="width:18%">PO / Item</th>
-                <th style="width:12%">Carton(s)</th>
-                <th style="width:12%">Total Pcs</th>
+                <th style="width:14%">Total Pcs</th>
+                <th style="width:14%">Carton(s)</th>
+                <th style="width:22%">UPC No. or Barcode</th>
                 <th style="width:14%">Gross Weight</th>
-                <th style="width:18%">UPC No.</th>
-                <th style="width:14%">Factory</th>
-                <th style="width:14%">Ship Date</th>
               </tr>
             </thead>
             <tbody id="orderUpdatePreviewBody"></tbody>
@@ -1491,7 +1621,17 @@
       </div>
       <div class="excel-modal__foot">
         <button type="button" class="btn" data-close-modal>Cancel</button>
-        <button type="button" class="btn primary" id="btnConfirmOrderUpdate">Confirm update</button>
+        <div class="confirm-popover-anchor">
+          <button type="button" class="btn primary" id="btnConfirmOrderUpdate" aria-expanded="false" aria-controls="orderUpdateConfirmPopover">Confirm update</button>
+          <div class="confirm-popover is-hidden" id="orderUpdateConfirmPopover" role="dialog" aria-labelledby="orderUpdateConfirmTitle">
+            <p class="confirm-popover__title" id="orderUpdateConfirmTitle">Update Booking order?</p>
+            <p class="confirm-popover__text">This will apply the final Excel values to order <strong>Q2600928854</strong>. Please confirm you have reviewed all highlighted changes.</p>
+            <div class="confirm-popover__actions">
+              <button type="button" class="btn" id="btnDismissOrderUpdateConfirm">Not now</button>
+              <button type="button" class="btn primary" id="btnProceedOrderUpdate">Yes, update order</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1518,14 +1658,40 @@
       });
 
       var bookingGridWrap = document.getElementById('bookingGridWrap');
+      var bookingGridTable = document.getElementById('bookingGridTable');
       var btnToggleOptionalColumns = document.getElementById('btnToggleOptionalColumns');
+
+      function syncBookingGridFlexColumn() {
+        if (!bookingGridTable) return;
+        var cols = bookingGridTable.querySelectorAll('colgroup col');
+        cols.forEach(function (col) {
+          col.classList.remove('col-w-flex');
+        });
+        var optionalHidden = bookingGridWrap && bookingGridWrap.classList.contains('optional-columns-hidden');
+        var flexCol = null;
+        if (optionalHidden) {
+          cols.forEach(function (col) {
+            if (col.classList.contains('col-mandatory')) {
+              flexCol = col;
+            }
+          });
+        } else if (cols.length) {
+          flexCol = cols[cols.length - 1];
+        }
+        if (flexCol) {
+          flexCol.classList.add('col-w-flex');
+        }
+      }
+
       if (bookingGridWrap && btnToggleOptionalColumns) {
         btnToggleOptionalColumns.addEventListener('click', function () {
           var hidden = bookingGridWrap.classList.toggle('optional-columns-hidden');
           btnToggleOptionalColumns.textContent = hidden ? 'Show optional columns' : 'Hide optional columns';
           btnToggleOptionalColumns.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+          syncBookingGridFlexColumn();
         });
       }
+      syncBookingGridFlexColumn();
 
       document.querySelectorAll('.maisa-collapse-card').forEach(function (card) {
         var toggle = card.querySelector('.maisa-collapse-toggle');
@@ -1539,6 +1705,60 @@
       function normalizeCellValue(value) {
         var normalized = (value || '').replace(/,/g, '').trim();
         return normalized === 'Blank' ? '' : normalized;
+      }
+
+      function stripNumericThousands(value) {
+        var trimmed = (value || '').trim();
+        if (/^\d{1,3}(,\d{3})+$/.test(trimmed)) {
+          return trimmed.replace(/,/g, '');
+        }
+        return value;
+      }
+
+      function normalizeEditableInputValue(input) {
+        if (!input) return;
+        var stripped = stripNumericThousands(input.value);
+        if (stripped !== input.value) {
+          input.value = stripped;
+        }
+      }
+
+      var LONG_GRID_INPUT_THRESHOLD = 48;
+
+      function syncLongGridInput(input) {
+        if (!input || !input.classList.contains('mandatory-input')) return input;
+        var value = input.value || '';
+        var isLong = value.length > LONG_GRID_INPUT_THRESHOLD;
+        var inner = input.closest('.mandatory-cell-inner');
+        var cell = input.closest('td');
+
+        if (isLong && input.tagName === 'INPUT') {
+          var textarea = document.createElement('textarea');
+          textarea.className = input.className + ' mandatory-textarea';
+          textarea.value = value;
+          Array.prototype.forEach.call(input.attributes, function (attr) {
+            if (attr.name !== 'value' && attr.name !== 'type') {
+              textarea.setAttribute(attr.name, attr.value);
+            }
+          });
+          textarea.rows = Math.min(4, Math.max(2, Math.ceil(value.length / 42)));
+          input.replaceWith(textarea);
+          input = textarea;
+        } else if (input.tagName === 'TEXTAREA') {
+          input.rows = Math.min(4, Math.max(2, Math.ceil(value.length / 42)));
+        }
+
+        input.classList.toggle('is-long-text', isLong);
+        input.classList.toggle('mandatory-textarea', input.tagName === 'TEXTAREA');
+        if (inner) inner.classList.toggle('has-long-text', isLong);
+        if (cell) cell.classList.toggle('has-long-content', isLong);
+        return input;
+      }
+
+      function syncAllLongGridInputs() {
+        document.querySelectorAll('.mandatory-input').forEach(function (input) {
+          syncLongGridInput(input);
+        });
       }
 
       function syncInputStyle(input) {
@@ -1621,6 +1841,7 @@
       document.querySelectorAll('.final-input').forEach(function (input) {
         syncInputStyle(input);
         input.addEventListener('input', function () {
+          normalizeEditableInputValue(input);
           syncInputStyle(input);
           preserveRowConfirmation(input.closest('tr'));
         });
@@ -1639,6 +1860,19 @@
           if (!row.classList.contains('is-confirmed')) pending += 1;
         });
         pendingEl.textContent = String(pending);
+        updateUnmatchedRowsCount();
+      }
+
+      function updateUnmatchedRowsCount() {
+        var unmatchedEl = document.getElementById('unmatched-rows-count');
+        if (!unmatchedEl) return;
+        var unmatchedLabels = {};
+        document.querySelectorAll('[data-column] .maisa-compare-table tbody tr').forEach(function (row) {
+          if (row.classList.contains('is-confirmed')) return;
+          var labelCell = row.querySelector('.maisa-col-label');
+          if (labelCell) unmatchedLabels[labelCell.textContent.trim()] = true;
+        });
+        unmatchedEl.textContent = String(Object.keys(unmatchedLabels).length);
       }
 
       function setRowConfirmed(row, confirmed) {
@@ -1673,45 +1907,37 @@
         {
           label: '7601224378 / AV18HSLATG',
           fields: {
-            cartons: { original: '868', final: '868' },
-            totalPcs: { original: '868', final: '868' },
-            grossWeight: { original: '12,450', final: '12,450' },
-            upc: { original: '', final: '' },
-            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
-            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+            totalPcs: { original: '868', final: '1736' },
+            cartons: { original: '868', final: '1629' },
+            upc: { original: '', final: '193969120001' },
+            grossWeight: { original: '12450', final: '12450' }
           }
         },
         {
           label: '7601224378 / AV18HSLATB',
           fields: {
-            cartons: { original: '512', final: '512' },
-            totalPcs: { original: '512', final: '512' },
-            grossWeight: { original: '7,820', final: '7,820' },
+            totalPcs: { original: '512', final: '1024' },
+            cartons: { original: '512', final: '1024' },
             upc: { original: '193969123456', final: '193969123456' },
-            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
-            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+            grossWeight: { original: '7820', final: '8160' }
           }
         },
         {
           label: '7601224378 / AV18HSLATW',
           fields: {
+            totalPcs: { original: '', final: '640' },
             cartons: { original: '640', final: '640' },
-            totalPcs: { original: '', final: '' },
-            grossWeight: { original: '9,120', final: '9,120' },
             upc: { original: '193969123457', final: '193969123457' },
-            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
-            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+            grossWeight: { original: '9120', final: '9120' }
           }
         },
         {
           label: '7601224378 / AV18HSLATR',
           fields: {
-            cartons: { original: '420', final: '420' },
             totalPcs: { original: '420', final: '420' },
-            grossWeight: { original: '6,300', final: '6,300' },
+            cartons: { original: '420', final: '420' },
             upc: { original: '193969123458', final: '193969123458' },
-            factory: { original: 'CN-SZ-01', final: 'CN-SZ-01' },
-            shipDate: { original: '2026-03-18', final: '2026-03-18' }
+            grossWeight: { original: '6300', final: '6300' }
           }
         }
       ];
@@ -1721,7 +1947,7 @@
         'upc': 'upc',
         'gross-weight': 'grossWeight'
       };
-      var previewFieldOrder = ['cartons', 'totalPcs', 'grossWeight', 'upc', 'factory', 'shipDate'];
+      var previewFieldOrder = ['totalPcs', 'cartons', 'upc', 'grossWeight'];
 
       function clonePreviewRows() {
         return previewBaselines.map(function (row) {
@@ -1805,8 +2031,24 @@
         });
       }
 
+      function hideOrderUpdateConfirmPopover() {
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        var trigger = document.getElementById('btnConfirmOrderUpdate');
+        if (popover) popover.classList.add('is-hidden');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      function showOrderUpdateConfirmPopover() {
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        var trigger = document.getElementById('btnConfirmOrderUpdate');
+        if (!popover || !trigger) return;
+        popover.classList.remove('is-hidden');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
       function openOrderUpdateModal() {
         if (!orderUpdateModal) return;
+        hideOrderUpdateConfirmPopover();
         refreshOrderUpdatePreview();
         orderUpdateModal.classList.add('is-open');
         orderUpdateModal.setAttribute('aria-hidden', 'false');
@@ -1815,6 +2057,7 @@
 
       function closeOrderUpdateModal() {
         if (!orderUpdateModal) return;
+        hideOrderUpdateConfirmPopover();
         orderUpdateModal.classList.remove('is-open');
         orderUpdateModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -1831,14 +2074,34 @@
       }
 
       document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && orderUpdateModal && orderUpdateModal.classList.contains('is-open')) {
-          closeOrderUpdateModal();
+        if (event.key !== 'Escape' || !orderUpdateModal || !orderUpdateModal.classList.contains('is-open')) return;
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        if (popover && !popover.classList.contains('is-hidden')) {
+          event.preventDefault();
+          hideOrderUpdateConfirmPopover();
+          return;
         }
+        closeOrderUpdateModal();
       });
 
       var btnConfirmOrderUpdate = document.getElementById('btnConfirmOrderUpdate');
+      var btnDismissOrderUpdateConfirm = document.getElementById('btnDismissOrderUpdateConfirm');
+      var btnProceedOrderUpdate = document.getElementById('btnProceedOrderUpdate');
       if (btnConfirmOrderUpdate) {
-        btnConfirmOrderUpdate.addEventListener('click', closeOrderUpdateModal);
+        btnConfirmOrderUpdate.addEventListener('click', function () {
+          var popover = document.getElementById('orderUpdateConfirmPopover');
+          if (popover && popover.classList.contains('is-hidden')) {
+            showOrderUpdateConfirmPopover();
+          } else {
+            hideOrderUpdateConfirmPopover();
+          }
+        });
+      }
+      if (btnDismissOrderUpdateConfirm) {
+        btnDismissOrderUpdateConfirm.addEventListener('click', hideOrderUpdateConfirmPopover);
+      }
+      if (btnProceedOrderUpdate) {
+        btnProceedOrderUpdate.addEventListener('click', closeOrderUpdateModal);
       }
 
       var fieldHoverTip = document.getElementById('fieldHoverTip');
@@ -2031,30 +2294,44 @@
         positionFieldHoverTip(input);
       }
 
+      function bindSingleFieldHoverTip(input) {
+        if (!input || input.dataset.fieldTipBound === '1') return;
+        input.dataset.fieldTipBound = '1';
+        var hasTip = false;
+        if (input.classList.contains('mandatory-input')) {
+          var td = input.closest('td');
+          hasTip = td && buildV2HoverLines(td, input);
+          input.addEventListener('input', function () {
+            normalizeEditableInputValue(input);
+            var updated = syncLongGridInput(input);
+            if (updated !== input) {
+              bindSingleFieldHoverTip(updated);
+            }
+          });
+        } else {
+          hasTip = buildV1HoverLines(input);
+        }
+        input.classList.toggle('field-has-tip', !!hasTip);
+        input.addEventListener('mouseenter', function () { showFieldHoverTip(input); });
+        input.addEventListener('focus', function () { showFieldHoverTip(input); });
+        input.addEventListener('mouseleave', function () {
+          if (fieldHoverAnchor === input) hideFieldHoverTip();
+        });
+        input.addEventListener('blur', function () {
+          if (fieldHoverAnchor === input) hideFieldHoverTip();
+        });
+      }
+
       function initFieldHoverTips() {
         document.querySelectorAll('.mandatory-input, .final-input').forEach(function (input) {
-          var hasTip = false;
-          if (input.classList.contains('mandatory-input')) {
-            var td = input.closest('td');
-            hasTip = td && buildV2HoverLines(td, input);
-          } else {
-            hasTip = buildV1HoverLines(input);
-          }
-          input.classList.toggle('field-has-tip', !!hasTip);
-          input.addEventListener('mouseenter', function () { showFieldHoverTip(input); });
-          input.addEventListener('focus', function () { showFieldHoverTip(input); });
-          input.addEventListener('mouseleave', function () {
-            if (fieldHoverAnchor === input) hideFieldHoverTip();
-          });
-          input.addEventListener('blur', function () {
-            if (fieldHoverAnchor === input) hideFieldHoverTip();
-          });
+          bindSingleFieldHoverTip(input);
         });
       }
 
       window.addEventListener('scroll', hideFieldHoverTip, true);
       window.addEventListener('resize', hideFieldHoverTip);
 
+      syncAllLongGridInputs();
       initFieldHoverTips();
     })();
   </script>
