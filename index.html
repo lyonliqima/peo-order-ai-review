@@ -503,11 +503,51 @@
       padding: 20px 24px;
     }
     .excel-modal__body .excel-mock {
-      font-size: 12px;
+      font-size: 11px;
     }
-    .excel-modal__body .excel-mock th,
-    .excel-modal__body .excel-mock td {
-      padding: 8px 10px;
+    .excel-modal__body .excel-preview-grid {
+      table-layout: auto;
+      min-width: 100%;
+    }
+    .excel-modal__body .excel-preview-grid th,
+    .excel-modal__body .excel-preview-grid td {
+      padding: 0;
+      vertical-align: bottom;
+    }
+    .excel-modal__body .excel-preview-grid .mandatory-cell-inner {
+      height: 72px;
+    }
+    .excel-modal__body .excel-preview-grid .mandatory-readonly {
+      width: 100%;
+      min-width: 0;
+      height: 28px;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 3px;
+      padding: 4px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255,255,255,.92);
+      box-sizing: border-box;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #191919;
+    }
+    .excel-modal__body .excel-preview-grid .mandatory-cell.preview-cell-changed .mandatory-readonly {
+      border-color: #00a876;
+      background: #eaf6f2;
+      color: #006648;
+      box-shadow: inset 0 0 0 1px #00a876;
+    }
+    .excel-modal__body .excel-preview-grid .cell-conflict .mandatory-readonly {
+      border-color: #f5c2c7;
+    }
+    .excel-modal__body .excel-preview-grid .cell-mandatory-warn .mandatory-readonly {
+      border-color: #fdba74;
+    }
+    .excel-modal__body .excel-preview-grid .mandatory-head {
+      padding: 8px 8px 6px;
     }
     .excel-modal__body .maisa-table-scroll {
       min-height: 360px;
@@ -576,6 +616,63 @@
     }
     .confirm-popover__actions .btn:not(.primary):hover {
       background: rgba(255, 255, 255, 0.08);
+    }
+    .order-update-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .order-update-status.is-hidden { display: none; }
+    .order-update-status__view.is-hidden { display: none; }
+    .order-update-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid #d3dcf8;
+      border-top-color: #153184;
+      border-radius: 50%;
+      animation: order-update-spin 0.75s linear infinite;
+      margin-bottom: 18px;
+    }
+    @keyframes order-update-spin {
+      to { transform: rotate(360deg); }
+    }
+    .order-update-success-badge {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: #eaf6f2;
+      color: #00a876;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 52px;
+    }
+    .order-update-status__title {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #191919;
+    }
+    .order-update-status__text {
+      margin: 0;
+      max-width: 440px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #525252;
+    }
+    .order-update-status__text strong { color: #153184; }
+    .order-update-status__actions {
+      margin-top: 20px;
+    }
+    .excel-modal__dialog.is-update-status .excel-modal__foot {
+      display: none;
+    }
+    #orderUpdatePreviewPanel.is-hidden {
+      display: none;
     }
     .excel-modal__note {
       margin-bottom: 12px;
@@ -826,6 +923,15 @@
     .stack-ai { color: #155DFB; font-weight: 600; }
     .stack-forecast { color: #00a876; font-weight: 600; }
     .stack-miss { color: #9ca3af; }
+    .cell-stack .stack-line.stack-pickable {
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .cell-stack .stack-line.stack-pickable:hover,
+    .cell-stack .stack-line.stack-pickable:focus-visible {
+      text-decoration: underline;
+      outline: none;
+    }
     .mandatory-cell.cell-conflict { background: #fdefef; }
     .mandatory-cell.cell-ai { background: #eef3ff; }
     .mandatory-cell.cell-miss { background: #f3f4f6; }
@@ -883,6 +989,19 @@
     .cell-mandatory-warn .mandatory-input { border-color: #fdba74; }
     .mandatory-input.field-has-tip,
     .final-input.field-has-tip { cursor: help; }
+    .mandatory-input:not(.is-edit-ready),
+    .final-input:not(.is-edit-ready) {
+      cursor: default;
+    }
+    .mandatory-input.field-has-tip:not(.is-edit-ready):not(.is-edit-armed),
+    .final-input.field-has-tip:not(.is-edit-ready):not(.is-edit-armed) {
+      cursor: help;
+    }
+    .mandatory-input.is-edit-armed:not(.is-edit-ready),
+    .final-input.is-edit-armed:not(.is-edit-ready) {
+      cursor: text;
+      box-shadow: inset 0 0 0 2px rgba(21, 93, 251, 0.22);
+    }
 
     .field-hover-tip {
       position: fixed;
@@ -948,17 +1067,6 @@
             <span class="review-result"><strong id="pending-count">13</strong> pending review</span>
           </div>
 
-          <div class="maisa-section">
-            <div class="qima-block-banner qima-block-banner--warning" role="alert">
-              <span class="qima-block-banner__icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16ZM8 10.4C8.60751 10.4 9.1 10.8925 9.1 11.5C9.1 12.1075 8.60751 12.6 8 12.6C7.39249 12.6 6.9 12.1075 6.9 11.5C6.9 10.8925 7.39249 10.4 8 10.4ZM8 3.5C8.51284 3.5 8.93551 3.88604 8.99327 4.38338L9 4.5V8C9 8.55229 8.55229 9 8 9C7.48716 9 7.06449 8.61396 7.00673 8.11662L7 8V4.5C7 3.94772 7.44772 3.5 8 3.5Z"/>
-                </svg>
-              </span>
-              <span class="qima-block-banner__message">Before validation is complete, <span class="bold">do not</span> upload Excel directly to update Booking. Confirm final values for each column on the left, then export the final Excel.</span>
-            </div>
-          </div>
-
           <div class="maisa-section maisa-card-bg">
             <div class="summary-grid">
               <div class="summary-card pass"><div class="num">12</div><div class="lbl">Matched</div></div>
@@ -969,7 +1077,7 @@
             </div>
           </div>
 
-          <div id="viewV1" class="review-view">
+          <div id="viewV1" class="review-view is-hidden">
           <div class="maisa-compare-panel">
             <div class="maisa-section maisa-section-header maisa-padding_bottom" style="margin-bottom:4px">
               <span class="maisa-section-title">
@@ -1216,7 +1324,7 @@
           </div>
           </div>
 
-          <div id="viewV2" class="review-view is-hidden">
+          <div id="viewV2" class="review-view">
             <div class="v2-panel maisa-card-bg" style="padding:12px 14px;">
               <div class="v2-panel-toolbar">
                 <span class="maisa-section-title">
@@ -1589,8 +1697,8 @@
   </div>
 
   <div class="version-switch" id="versionSwitch" aria-label="View version switch">
-    <button type="button" class="version-switch__btn active" data-version="v1">V1</button>
-    <button type="button" class="version-switch__btn" data-version="v2">V2</button>
+    <button type="button" class="version-switch__btn" data-version="v1" hidden>V1</button>
+    <button type="button" class="version-switch__btn active" data-version="v2">V2</button>
     <button type="button" class="version-switch__btn" data-version="v2-walmart">Walmart</button>
   </div>
 
@@ -1604,28 +1712,44 @@
         </div>
         <button type="button" class="excel-modal__close" data-close-modal aria-label="Close">×</button>
       </div>
-      <div class="excel-modal__body">
-        <p class="excel-modal__note">Review the Excel content below. On confirm, it will update the Booking order. <strong>Green highlight</strong> indicates a change from the Booking original.</p>
+      <div class="excel-modal__body" id="orderUpdateModalBody">
+        <div id="orderUpdatePreviewPanel">
         <div class="legend" aria-label="Color legend">
           <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
           <span class="legend-item"><span class="legend-swatch changed"></span>Changed</span>
         </div>
         <div class="maisa-table-scroll">
-          <table class="excel-mock" aria-label="Final Excel preview for order update">
+          <table class="excel-mock booking-grid excel-preview-grid" aria-label="Final Excel preview for order update">
             <thead>
               <tr>
-                <th style="width:18%">PO / Item</th>
-                <th style="width:14%">Total Pcs</th>
-                <th style="width:14%">Carton(s)</th>
-                <th style="width:22%">UPC No. or Barcode</th>
-                <th style="width:14%">Gross Weight</th>
+                <th class="row-label">PO / Item</th>
+                <th class="mandatory-head"><span class="mandatory-mark">*</span>Total Pcs<span class="th-sub">总件数</span></th>
+                <th class="mandatory-head"><span class="mandatory-mark">*</span>Carton(s)<span class="th-sub">箱数</span></th>
+                <th class="mandatory-head"><span class="mandatory-mark">*</span>UPC No. or Barcode<span class="th-sub">每个型号的条形码</span></th>
+                <th class="mandatory-head">Gross Weight</th>
               </tr>
             </thead>
             <tbody id="orderUpdatePreviewBody"></tbody>
           </table>
         </div>
+        </div>
+        <div class="order-update-status is-hidden" id="orderUpdateStatusPanel" role="status" aria-live="polite">
+          <div class="order-update-status__view" id="orderUpdateLoadingView">
+            <div class="order-update-spinner" aria-hidden="true"></div>
+            <p class="order-update-status__title">Updating Booking order…</p>
+            <p class="order-update-status__text">Applying your final Excel values to order <strong>Q2600928854</strong>. Please wait.</p>
+          </div>
+          <div class="order-update-status__view is-hidden" id="orderUpdateSuccessView">
+            <div class="order-update-success-badge" aria-hidden="true">✓</div>
+            <p class="order-update-status__title">Update submitted</p>
+            <p class="order-update-status__text">Return to the <strong>SSO</strong> page to view the update result. You can close this page now.</p>
+            <div class="order-update-status__actions">
+              <button type="button" class="btn primary" data-close-modal>Close this page</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="excel-modal__foot">
+      <div class="excel-modal__foot" id="orderUpdateModalFoot">
         <button type="button" class="btn" data-close-modal>Cancel</button>
         <div class="confirm-popover-anchor">
           <button type="button" class="btn primary" id="btnConfirmOrderUpdate" aria-expanded="false" aria-controls="orderUpdateConfirmPopover">Confirm update</button>
@@ -1727,6 +1851,87 @@
         if (stripped !== input.value) {
           input.value = stripped;
         }
+      }
+
+      var armedEditInput = null;
+
+      function isEditableGridInput(input) {
+        return input && (input.classList.contains('mandatory-input') || input.classList.contains('final-input'));
+      }
+
+      function disarmInputEdit(input) {
+        if (!input || !isEditableGridInput(input)) return;
+        input.readOnly = true;
+        input.classList.remove('is-edit-ready', 'is-edit-armed');
+        if (armedEditInput === input) armedEditInput = null;
+      }
+
+      function enableInputEdit(input) {
+        if (!isEditableGridInput(input)) return;
+        input.readOnly = false;
+        input.classList.add('is-edit-ready');
+        input.classList.remove('is-edit-armed');
+        if (armedEditInput === input) armedEditInput = null;
+        input.focus();
+      }
+
+      function armInputEdit(input) {
+        if (!isEditableGridInput(input)) return;
+        if (armedEditInput && armedEditInput !== input) {
+          disarmInputEdit(armedEditInput);
+        }
+        input.readOnly = true;
+        input.classList.add('is-edit-armed');
+        input.classList.remove('is-edit-ready');
+        armedEditInput = input;
+        input.focus();
+      }
+
+      function bindInputEditGuard(input) {
+        if (!input || input.dataset.editGuardBound === '1') return;
+        if (!isEditableGridInput(input)) return;
+        input.dataset.editGuardBound = '1';
+        disarmInputEdit(input);
+
+        input.addEventListener('mousedown', function (event) {
+          if (!input.classList.contains('is-edit-ready')) {
+            event.preventDefault();
+          }
+        });
+
+        input.addEventListener('click', function () {
+          if (input.classList.contains('is-edit-ready')) return;
+          if (input.classList.contains('is-edit-armed')) {
+            enableInputEdit(input);
+            return;
+          }
+          armInputEdit(input);
+        });
+
+        input.addEventListener('blur', function () {
+          window.setTimeout(function () {
+            if (document.activeElement === input) return;
+            disarmInputEdit(input);
+          }, 0);
+        });
+
+        input.addEventListener('keydown', function (event) {
+          if (input.classList.contains('is-edit-ready')) return;
+          if (event.key === 'Enter' && input.classList.contains('is-edit-armed')) {
+            event.preventDefault();
+            enableInputEdit(input);
+            return;
+          }
+          if (event.key !== 'Tab' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            event.preventDefault();
+          }
+        });
+      }
+
+      function initInputEditGuards() {
+        document.querySelectorAll('.mandatory-input, .final-input').forEach(function (input) {
+          bindInputEditGuard(input);
+        });
       }
 
       var LONG_GRID_INPUT_THRESHOLD = 48;
@@ -1954,6 +2159,75 @@
         'gross-weight': 'grossWeight'
       };
       var previewFieldOrder = ['totalPcs', 'cartons', 'upc', 'grossWeight'];
+      var previewGridColIndex = {
+        totalPcs: 10,
+        cartons: 9,
+        upc: 19
+      };
+      var previewRowPoCol = 2;
+      var previewRowVendorCol = 4;
+
+      function getPreviewRowLabel(tr) {
+        if (!tr || !tr.cells) return '';
+        var poCell = tr.cells[previewRowPoCol];
+        var vendorCell = tr.cells[previewRowVendorCol];
+        var po = poCell && poCell.querySelector('.mandatory-input') ? poCell.querySelector('.mandatory-input').value.trim() : '';
+        var vendor = vendorCell && vendorCell.querySelector('.mandatory-input') ? vendorCell.querySelector('.mandatory-input').value.trim() : '';
+        if (po && vendor) return po + ' / ' + vendor;
+        return tr.dataset.v2Row || '';
+      }
+
+      function getPreviewCellTone(td) {
+        if (!td) return 'cell-ok';
+        var tones = ['cell-conflict', 'cell-ok', 'cell-ai', 'cell-miss', 'cell-default', 'cell-mandatory-warn'];
+        for (var i = 0; i < tones.length; i++) {
+          if (td.classList.contains(tones[i])) return tones[i];
+        }
+        return 'cell-ok';
+      }
+
+      function extractPreviewFieldFromGridRow(tr, colIndex) {
+        var td = tr.cells[colIndex];
+        if (!td) {
+          return { original: '', final: '', stackMarkup: '', tone: 'cell-ok', changed: false };
+        }
+        var stackEl = td.querySelector('.cell-stack');
+        var supplier = readStackLine(stackEl, 'supplier');
+        var ai = readStackLine(stackEl, 'ai');
+        var input = td.querySelector('.mandatory-input');
+        var finalValue = input ? input.value.trim() : '';
+        var original = supplier || '';
+        return {
+          original: original,
+          final: finalValue,
+          stackMarkup: stackEl ? stackEl.innerHTML : '',
+          tone: getPreviewCellTone(td),
+          changed: isPreviewFieldChanged(original, finalValue)
+        };
+      }
+
+      function makePreviewPlaceholderLine() {
+        var span = document.createElement('span');
+        span.className = 'stack-line stack-placeholder';
+        span.setAttribute('aria-hidden', 'true');
+        return span;
+      }
+
+      function populatePreviewStack(stack, field) {
+        stack.innerHTML = '';
+        if (field.stackMarkup) {
+          stack.innerHTML = field.stackMarkup;
+          stack.querySelectorAll('.stack-pickable').forEach(function (line) {
+            line.classList.remove('stack-pickable');
+            line.removeAttribute('role');
+            line.removeAttribute('tabindex');
+            line.removeAttribute('data-stack-pick-bound');
+          });
+          return;
+        }
+        stack.appendChild(makePreviewPlaceholderLine());
+        stack.appendChild(makePreviewPlaceholderLine());
+      }
 
       function clonePreviewRows() {
         return previewBaselines.map(function (row) {
@@ -1982,15 +2256,33 @@
 
       function makePreviewValueCell(field) {
         var td = document.createElement('td');
+        var tone = field.tone || 'cell-ok';
         var original = field.original || '';
-        var finalValue = field.final || original || 'Blank';
-        if (!finalValue) finalValue = 'Blank';
-        var changed = isPreviewFieldChanged(original, finalValue);
-        td.className = changed ? 'changed' : 'ok';
-        td.textContent = finalValue;
+        var finalValue = field.final || '';
+        var changed = typeof field.changed === 'boolean' ? field.changed : isPreviewFieldChanged(original, finalValue);
+        td.className = 'mandatory-cell ' + tone;
+        if (changed) td.classList.add('preview-cell-changed');
+
+        var inner = document.createElement('div');
+        inner.className = 'mandatory-cell-inner';
+
+        var stack = document.createElement('div');
+        stack.className = 'cell-stack';
+        populatePreviewStack(stack, field);
+
+        var readonly = document.createElement('div');
+        readonly.className = 'mandatory-readonly';
+        readonly.setAttribute('aria-readonly', 'true');
+        var displayValue = finalValue || original || 'Blank';
+        if (!displayValue) displayValue = 'Blank';
+        readonly.textContent = displayValue;
         if (changed) {
-          td.title = 'Booking original: ' + (original || 'Blank');
+          readonly.title = 'Booking original: ' + (original || 'Blank');
         }
+
+        inner.appendChild(stack);
+        inner.appendChild(readonly);
+        td.appendChild(inner);
         return td;
       }
 
@@ -2004,10 +2296,9 @@
           rowByLabel[row.label] = row;
         });
 
-        document.querySelectorAll('[data-column]').forEach(function (card) {
-          var fieldKey = columnFieldMap[card.dataset.column];
-          if (!fieldKey) return;
-          card.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (tr) {
+        var grossWeightCard = document.querySelector('[data-column="gross-weight"]');
+        if (grossWeightCard) {
+          grossWeightCard.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (tr) {
             var labelCell = tr.querySelector('.maisa-col-label');
             var input = tr.querySelector('.final-input');
             if (!labelCell || !input) return;
@@ -2019,12 +2310,31 @@
             }
             var bookingCell = tr.cells[2];
             var original = input.dataset.original || (bookingCell ? bookingCell.textContent.trim() : '');
-            rowByLabel[label].fields[fieldKey] = {
+            var finalValue = input.value.trim();
+            rowByLabel[label].fields.grossWeight = {
               original: original,
-              final: input.value.trim()
+              final: finalValue,
+              tone: 'cell-ok',
+              changed: isPreviewFieldChanged(original, finalValue)
             };
           });
-        });
+        }
+
+        var bookingGridTable = document.getElementById('bookingGridTable');
+        if (bookingGridTable) {
+          bookingGridTable.querySelectorAll('tbody tr[data-v2-row]').forEach(function (tr) {
+            var label = getPreviewRowLabel(tr);
+            if (!label) return;
+            if (!rowByLabel[label]) {
+              var gridRow = { label: label, fields: {} };
+              rows.push(gridRow);
+              rowByLabel[label] = gridRow;
+            }
+            Object.keys(previewGridColIndex).forEach(function (fieldKey) {
+              rowByLabel[label].fields[fieldKey] = extractPreviewFieldFromGridRow(tr, previewGridColIndex[fieldKey]);
+            });
+          });
+        }
 
         tbody.innerHTML = '';
         rows.forEach(function (row) {
@@ -2044,6 +2354,54 @@
         if (trigger) trigger.setAttribute('aria-expanded', 'false');
       }
 
+      function resetOrderUpdateModalView() {
+        var dialog = orderUpdateModal ? orderUpdateModal.querySelector('.excel-modal__dialog') : null;
+        var previewPanel = document.getElementById('orderUpdatePreviewPanel');
+        var statusPanel = document.getElementById('orderUpdateStatusPanel');
+        var loadingView = document.getElementById('orderUpdateLoadingView');
+        var successView = document.getElementById('orderUpdateSuccessView');
+        var title = document.getElementById('orderUpdateModalTitle');
+        if (dialog) dialog.classList.remove('is-update-status');
+        if (previewPanel) previewPanel.classList.remove('is-hidden');
+        if (statusPanel) statusPanel.classList.add('is-hidden');
+        if (loadingView) loadingView.classList.remove('is-hidden');
+        if (successView) successView.classList.add('is-hidden');
+        if (title) title.textContent = 'Update order · Final Excel preview';
+      }
+
+      function showOrderUpdateInProgress() {
+        hideOrderUpdateConfirmPopover();
+        var dialog = orderUpdateModal ? orderUpdateModal.querySelector('.excel-modal__dialog') : null;
+        var previewPanel = document.getElementById('orderUpdatePreviewPanel');
+        var statusPanel = document.getElementById('orderUpdateStatusPanel');
+        var loadingView = document.getElementById('orderUpdateLoadingView');
+        var successView = document.getElementById('orderUpdateSuccessView');
+        var title = document.getElementById('orderUpdateModalTitle');
+        if (dialog) dialog.classList.add('is-update-status');
+        if (previewPanel) previewPanel.classList.add('is-hidden');
+        if (statusPanel) statusPanel.classList.remove('is-hidden');
+        if (loadingView) loadingView.classList.remove('is-hidden');
+        if (successView) successView.classList.add('is-hidden');
+        if (title) title.textContent = 'Updating order…';
+      }
+
+      function showOrderUpdateSuccess() {
+        var loadingView = document.getElementById('orderUpdateLoadingView');
+        var successView = document.getElementById('orderUpdateSuccessView');
+        var title = document.getElementById('orderUpdateModalTitle');
+        if (loadingView) loadingView.classList.add('is-hidden');
+        if (successView) successView.classList.remove('is-hidden');
+        if (title) title.textContent = 'Update submitted';
+      }
+
+      function proceedOrderUpdate() {
+        if (!orderUpdateModal || !orderUpdateModal.classList.contains('is-open')) return;
+        showOrderUpdateInProgress();
+        window.setTimeout(function () {
+          showOrderUpdateSuccess();
+        }, 2200);
+      }
+
       function showOrderUpdateConfirmPopover() {
         var popover = document.getElementById('orderUpdateConfirmPopover');
         var trigger = document.getElementById('btnConfirmOrderUpdate');
@@ -2054,6 +2412,7 @@
 
       function openOrderUpdateModal() {
         if (!orderUpdateModal) return;
+        resetOrderUpdateModalView();
         hideOrderUpdateConfirmPopover();
         refreshOrderUpdatePreview();
         orderUpdateModal.classList.add('is-open');
@@ -2064,6 +2423,7 @@
       function closeOrderUpdateModal() {
         if (!orderUpdateModal) return;
         hideOrderUpdateConfirmPopover();
+        resetOrderUpdateModalView();
         orderUpdateModal.classList.remove('is-open');
         orderUpdateModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -2107,7 +2467,7 @@
         btnDismissOrderUpdateConfirm.addEventListener('click', hideOrderUpdateConfirmPopover);
       }
       if (btnProceedOrderUpdate) {
-        btnProceedOrderUpdate.addEventListener('click', closeOrderUpdateModal);
+        btnProceedOrderUpdate.addEventListener('click', proceedOrderUpdate);
       }
 
       var fieldHoverTip = document.getElementById('fieldHoverTip');
@@ -2133,6 +2493,48 @@
         var text = el.textContent.trim();
         if (!text || text === '—' || text === 'Blank') return null;
         return text;
+      }
+
+      function isStackLinePickable(line) {
+        if (!line || line.classList.contains('stack-placeholder') || line.classList.contains('stack-miss')) return false;
+        if (!line.classList.contains('stack-supplier') && !line.classList.contains('stack-ai') && !line.classList.contains('stack-forecast')) return false;
+        var text = (line.textContent || '').trim();
+        if (!text || text === '—') return false;
+        return normalizeCellValue(text) !== '';
+      }
+
+      function applyStackValueToInput(line) {
+        var inner = line.closest('.mandatory-cell-inner');
+        if (!inner) return;
+        var input = inner.querySelector('.mandatory-input');
+        if (!input) return;
+        input.value = (line.textContent || '').trim();
+        normalizeEditableInputValue(input);
+        var updated = syncLongGridInput(input);
+        if (updated !== input) {
+          bindSingleFieldHoverTip(updated);
+          input = updated;
+        }
+        input.focus();
+        showFieldHoverTip(input);
+      }
+
+      function initStackValuePickers() {
+        document.querySelectorAll('.cell-stack .stack-line').forEach(function (line) {
+          if (!isStackLinePickable(line)) return;
+          line.classList.add('stack-pickable');
+          line.setAttribute('role', 'button');
+          line.setAttribute('tabindex', '0');
+          if (line.dataset.stackPickBound === '1') return;
+          line.dataset.stackPickBound = '1';
+          line.addEventListener('click', function () { applyStackValueToInput(line); });
+          line.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              applyStackValueToInput(line);
+            }
+          });
+        });
       }
 
       function getColumnHeaderLabel(table, cellIndex) {
@@ -2201,9 +2603,8 @@
 
         if (colName) lines.push({ text: colName, className: 'is-muted' });
         if (supplier) lines.push({ label: 'Supplier', value: supplier });
-        if (ai) lines.push({ label: 'AI', value: ai });
+        if (ai) lines.push({ label: 'QIMA AI Agent', value: ai });
         if (forecast) lines.push({ label: 'Forecast', value: forecast });
-        lines.push({ label: 'Final', value: displayValue(input.value) });
         return lines;
       }
 
@@ -2301,7 +2702,9 @@
       }
 
       function bindSingleFieldHoverTip(input) {
-        if (!input || input.dataset.fieldTipBound === '1') return;
+        if (!input) return;
+        bindInputEditGuard(input);
+        if (input.dataset.fieldTipBound === '1') return;
         input.dataset.fieldTipBound = '1';
         var hasTip = false;
         if (input.classList.contains('mandatory-input')) {
@@ -2338,6 +2741,7 @@
       window.addEventListener('resize', hideFieldHoverTip);
 
       syncAllLongGridInputs();
+      initStackValuePickers();
       initFieldHoverTips();
     })();
   </script>
