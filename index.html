@@ -2167,6 +2167,42 @@
         return columns;
       }
 
+      function getPreviewBookingOriginal(td, supplier, finalValue) {
+        if (td.classList.contains('cell-conflict')) {
+          return supplier || '';
+        }
+        if (td.classList.contains('cell-ai')) {
+          return '';
+        }
+        if (td.classList.contains('cell-miss') && supplier) {
+          return supplier;
+        }
+        if (td.classList.contains('cell-ok')) {
+          return finalValue;
+        }
+        return supplier || '';
+      }
+
+      function isPreviewCellChanged(td, supplier, finalValue) {
+        if (td.classList.contains('cell-conflict')) {
+          return isPreviewFieldChanged(supplier, finalValue);
+        }
+        if (td.classList.contains('cell-ai')) {
+          return normalizePreviewValue(finalValue) !== '';
+        }
+        if (td.classList.contains('cell-default') || td.classList.contains('cell-ok')) {
+          return false;
+        }
+        if (td.classList.contains('cell-miss')) {
+          if (supplier) return isPreviewFieldChanged(supplier, finalValue);
+          return false;
+        }
+        if (td.classList.contains('cell-mandatory-warn')) {
+          return normalizePreviewValue(finalValue) !== '';
+        }
+        return false;
+      }
+
       function extractPreviewFieldFromGridRow(tr, colIndex) {
         var td = tr.cells[colIndex];
         if (!td || window.getComputedStyle(td).display === 'none') {
@@ -2176,11 +2212,11 @@
         var supplier = readStackLine(stackEl, 'supplier');
         var input = td.querySelector('.mandatory-input');
         var finalValue = input ? input.value.trim() : '';
-        var original = supplier || '';
+        var original = getPreviewBookingOriginal(td, supplier, finalValue);
         return {
           original: original,
           final: finalValue,
-          changed: isPreviewFieldChanged(original, finalValue),
+          changed: isPreviewCellChanged(td, supplier, finalValue),
           longContent: td.classList.contains('has-long-content')
         };
       }
