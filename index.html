@@ -783,9 +783,13 @@
       background: #fff;
     }
     .plm-page-panel.is-hidden { display: none; }
+    .plm-page-panel .plm-flow__title {
+      margin-bottom: 4px;
+    }
     .plm-page-panel .plm-flow__actions {
       display: flex;
       flex-wrap: wrap;
+      justify-content: flex-end;
       gap: 8px;
       margin-top: 12px;
     }
@@ -2390,7 +2394,7 @@
           sub: 'Order updating, file updating · Excel may take 10–30s',
           heading: 'Update in progress',
           desc: 'Applying confirmed values to the booking order and generating the final Excel in parallel.',
-          banner: { cls: 'info', text: 'Do not download yet. Close keeps this tab; refresh the page later to see status.' },
+          banner: { cls: 'info', text: 'Do not download yet. This tab stays open; refresh the page later to see status.' },
           order: { state: 'running', status: 'Applying field changes to order Q2600928854', time: 'Started 09:48:12' },
           excel: { state: 'running', status: 'Building final Excel from confirmed values', time: 'Started 09:48:12' }
         },
@@ -2408,7 +2412,7 @@
           sub: 'Second load / commit in progress',
           heading: 'Confirming update',
           desc: 'Committing the order update and finalizing Excel generation.',
-          banner: { cls: 'info', text: 'Please wait. Closing the dialog keeps this tab; refresh later to see the result.' },
+          banner: { cls: 'info', text: 'Please wait. This tab stays open; refresh later to see the result.' },
           order: { state: 'running', status: 'Committing order Q2600928854', time: 'Started 09:48:40' },
           excel: { state: 'running', status: 'Finalizing Excel file', time: 'Started 09:48:40' }
         },
@@ -2575,21 +2579,25 @@
       function renderPageStatusPanel() {
         var panel = document.getElementById('plmPageStatusPanel');
         if (!panel) return;
-        var show = plm.phase === 'result' && !(orderUpdateModal && orderUpdateModal.classList.contains('is-open'));
+        var show = plm.phase === 'submitting' || plm.phase === 'submitted' || plm.phase === 'confirming' || plm.phase === 'result';
         if (!show) {
           panel.classList.add('is-hidden');
           panel.innerHTML = '';
           return;
         }
-        var copy = copyForPhase('result', plm.outcome);
+        var copy = copyForPhase(plm.phase, plm.outcome);
         var vis = visibleButtonsForState();
         var actions = '';
+        if (vis.confirm) actions += '<button type="button" class="btn primary" data-plm-page-action="confirm">Confirm update</button>';
         if (vis.download) actions += '<button type="button" class="btn" data-plm-page-action="download">Download final Excel</button>';
         if (vis.generate) actions += '<button type="button" class="btn primary" data-plm-page-action="generate">Generate</button>';
         if (vis.retry) actions += '<button type="button" class="btn" data-plm-page-action="retry">Retry update</button>';
         if (vis['gen-excel']) actions += '<button type="button" class="btn primary" data-plm-page-action="gen-excel">Generate Excel</button>';
         if (vis.resubmit) actions += '<button type="button" class="btn primary" data-plm-page-action="resubmit">Resubmit</button>';
-        panel.innerHTML = flowHtml(copy, { showFacts: true }) + (actions ? '<div class="plm-flow__actions">' + actions + '</div>' : '');
+        panel.innerHTML = flowHtml(copy, {
+          showFacts: plm.phase !== 'submitting' && plm.phase !== 'confirming',
+          showTitle: true
+        }) + (actions ? '<div class="plm-flow__actions">' + actions + '</div>' : '');
         panel.classList.remove('is-hidden');
       }
 
@@ -2608,38 +2616,10 @@
         var demoKey = phase === 'result' ? ('result:' + plm.outcome) : phase;
         setPlmDemoTab(demoKey);
 
-        var title = document.getElementById('orderUpdateModalTitle');
-        var sub = document.getElementById('orderUpdateModalSub');
-        var flow = document.getElementById('orderUpdateFlowPanel');
-        var preview = document.getElementById('orderUpdatePreviewPanel');
-        var foot = document.getElementById('orderUpdateModalFoot');
-
-        if (phase === 'idle' || phase === 'revisit') {
-          closeOrderUpdateModalUi();
-          if (flow) {
-            flow.innerHTML = '';
-            flow.classList.add('is-hidden');
-          }
-          if (preview) preview.classList.remove('is-hidden');
-          persistPlm();
-          renderPageStatusPanel();
-          return;
+        closeOrderUpdateModalUi();
+        if (phase !== 'idle' && phase !== 'revisit') {
+          refreshOrderUpdatePreview();
         }
-
-        var copy = copyForPhase(phase, plm.outcome);
-        if (title) title.textContent = copy.title;
-        if (sub) sub.textContent = copy.sub;
-        if (flow) {
-          flow.classList.remove('is-hidden');
-          flow.innerHTML = flowHtml(copy, {
-            showFacts: phase !== 'submitting' && phase !== 'confirming',
-            showTitle: false
-          });
-        }
-        if (preview) preview.classList.remove('is-hidden');
-        if (foot) foot.style.display = '';
-        refreshOrderUpdatePreview();
-        syncPlmButtons();
         persistPlm();
         renderPageStatusPanel();
       }
@@ -2663,7 +2643,6 @@
         if (options.outcome) plm.outcome = options.outcome;
         plm.excelReady = false;
         refreshOrderUpdatePreview();
-        openOrderUpdateModalUi();
         applyPlmState('submitting');
         later(function () {
           if (plm.phase !== 'submitting') return;
@@ -2673,7 +2652,6 @@
 
       function startConfirming() {
         if (plm.phase !== 'submitted' && plm.phase !== 'confirming') return;
-        openOrderUpdateModalUi();
         applyPlmState('confirming');
         later(function () {
           if (plm.phase !== 'confirming') return;
@@ -2722,19 +2700,7 @@
 
       function generateExcelAgain() {
         plm.excelReady = false;
-        openOrderUpdateModalUi();
         applyPlmState('confirming', { outcome: 'excel-fail' });
-        var flow = document.getElementById('orderUpdateFlowPanel');
-        if (flow) {
-          var copy = {
-            heading: 'Generating Excel…',
-            desc: 'Re-running file generation. Download will unlock when the file is ready.',
-            banner: { cls: 'info', text: 'Order is already updated. Wait for Excel, then download becomes available.' },
-            order: { state: 'success', status: 'Order already updated', time: 'Completed 09:48:34' },
-            excel: { state: 'running', status: 'Generating Excel from confirmed values', time: 'Started now' }
-          };
-          flow.innerHTML = flowHtml(copy, { showFacts: true, showTitle: false });
-        }
         later(function () {
           plm.excelReady = true;
           plm.outcome = 'both-ok';
@@ -2786,7 +2752,6 @@
         if (key === 'submitted') {
           plm.outcome = 'both-ok';
           refreshOrderUpdatePreview();
-          openOrderUpdateModalUi();
           applyPlmState('submitted');
           return;
         }
@@ -2795,7 +2760,6 @@
           plm.outcome = outcome;
           plm.excelReady = outcome === 'both-ok' || outcome === 'order-fail';
           refreshOrderUpdatePreview();
-          openOrderUpdateModalUi();
           applyPlmState('result', { outcome: outcome, excelReady: plm.excelReady });
         }
       }
@@ -2852,6 +2816,7 @@
           var actionBtn = event.target.closest('[data-plm-page-action]');
           if (!actionBtn) return;
           var action = actionBtn.getAttribute('data-plm-page-action');
+          if (action === 'confirm') startConfirming();
           if (action === 'download') downloadOrderUpdateExcel();
           if (action === 'generate') generateAiReview();
           if (action === 'retry') retryOrderUpdate();
@@ -2866,23 +2831,21 @@
           plm.outcome = saved.outcome || 'both-ok';
           plm.excelReady = !!saved.excelReady;
           refreshOrderUpdatePreview();
-          if (saved.closed) {
-            if (saved.phase === 'submitted') {
-              openOrderUpdateModalUi();
-              applyPlmState('submitted');
-            } else {
-              openOrderUpdateModalUi();
+          if (saved.phase === 'revisit' || saved.closed) {
+            if (saved.phase === 'submitted') applyPlmState('submitted');
+            else if (saved.phase === 'submitting' || saved.phase === 'confirming' || saved.phase === 'revisit') {
               applyPlmState('result', {
                 outcome: plm.outcome,
                 excelReady: plm.excelReady || (plm.outcome === 'both-ok' || plm.outcome === 'order-fail')
               });
+            } else {
+              applyPlmState(saved.phase, { outcome: plm.outcome, excelReady: plm.excelReady });
             }
-          } else if (saved.phase === 'submitting' || saved.phase === 'confirming') {
-            openOrderUpdateModalUi();
-            applyPlmState('result', { outcome: plm.outcome || 'both-ok', excelReady: true });
           } else {
-            openOrderUpdateModalUi();
-            applyPlmState(saved.phase, { outcome: plm.outcome, excelReady: plm.excelReady });
+            applyPlmState(saved.phase === 'submitting' || saved.phase === 'confirming' ? 'result' : saved.phase, {
+              outcome: plm.outcome,
+              excelReady: plm.excelReady || true
+            });
           }
         }
       } catch (err) {}
