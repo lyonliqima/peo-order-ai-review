@@ -806,16 +806,24 @@
     .plm-locked-note.is-hidden { display: none; }
     body.plm-revisit #plmPageStatusPanel { display: none; }
     body.plm-locked #btnUpdateOrder { display: none; }
-    body.plm-success-readonly .booking-grid .cell-stack {
+    body.plm-grid-readonly .booking-grid .cell-stack {
       display: none !important;
     }
-    body.plm-success-readonly .booking-grid tbody td.mandatory-cell,
-    body.plm-success-readonly .booking-grid tbody td.grid-cell {
+    body.plm-grid-readonly .booking-grid tbody td.mandatory-cell,
+    body.plm-grid-readonly .booking-grid tbody td.grid-cell {
       background: #fff;
     }
-    body.plm-success-readonly .booking-grid .mandatory-input {
+    body.plm-grid-readonly .booking-grid .mandatory-input,
+    body.plm-grid-readonly .booking-grid .mandatory-input:focus,
+    body.plm-grid-readonly .booking-grid .cell-conflict .mandatory-input,
+    body.plm-grid-readonly .booking-grid .cell-mandatory-warn .mandatory-input {
       pointer-events: none;
       cursor: default;
+      caret-color: transparent;
+      user-select: none;
+      resize: none;
+      appearance: none;
+      -webkit-appearance: none;
       height: 28px;
       border: 1px solid rgba(0,0,0,.12);
       border-radius: 3px;
@@ -823,19 +831,38 @@
       font-weight: 600;
       color: #191919;
       box-shadow: none;
+      outline: none;
     }
-    body.plm-success-readonly .booking-grid td.preview-cell-changed .mandatory-input {
+    body.plm-grid-readonly .booking-grid td.preview-cell-changed .mandatory-input,
+    body.plm-grid-readonly .booking-grid td.preview-cell-changed .mandatory-input:focus,
+    body.plm-grid-readonly .booking-grid td.preview-cell-changed.cell-conflict .mandatory-input,
+    body.plm-grid-readonly .booking-grid td.preview-cell-changed.cell-mandatory-warn .mandatory-input {
       border-color: #00a876;
       background: #eaf6f2;
       color: #006648;
       box-shadow: inset 0 0 0 1px #00a876;
     }
-    body.plm-success-readonly .booking-grid td.has-long-content .mandatory-input {
+    body.plm-grid-readonly .booking-grid td.has-long-content .mandatory-input {
       white-space: pre-wrap;
       height: auto;
       min-height: 28px;
       max-height: 80px;
       overflow-y: auto;
+    }
+    body.plm-grid-readonly .final-input,
+    body.plm-grid-readonly .final-input:focus {
+      pointer-events: none;
+      cursor: default;
+      caret-color: transparent;
+      box-shadow: none;
+      outline: none;
+    }
+    body.plm-grid-readonly .toggle-group button,
+    body.plm-grid-readonly .row-confirm-btn,
+    body.plm-grid-readonly [data-accept-column],
+    body.plm-grid-readonly [data-reset-column] {
+      pointer-events: none;
+      opacity: 0.45;
     }
     @media (max-width: 960px) {
       .plm-facts, .plm-tasks { grid-template-columns: 1fr; }
@@ -1239,7 +1266,6 @@
       <button type="button" class="plm-demo-tab" data-plm-demo="result:order-fail">Order fail</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:excel-fail">Excel fail</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:both-fail">Both fail</button>
-      <button type="button" class="plm-demo-tab" data-plm-demo="revisit">Revisit / closed</button>
     </div>
     <div class="maisa-split-layout" id="maisaSplitLayout">
 <div class="maisa-split-pane maisa-split-pane-left" id="maisaLeftPane">
@@ -2035,6 +2061,10 @@
         return input && (input.classList.contains('mandatory-input') || input.classList.contains('final-input'));
       }
 
+      function isReviewEditable() {
+        return typeof plm === 'undefined' || plm.phase === 'idle';
+      }
+
       function disarmInputEdit(input) {
         if (!input || !isEditableGridInput(input)) return;
         input.readOnly = true;
@@ -2043,6 +2073,7 @@
       }
 
       function enableInputEdit(input) {
+        if (!isReviewEditable()) return;
         if (!isEditableGridInput(input)) return;
         input.readOnly = false;
         input.classList.add('is-edit-ready');
@@ -2052,6 +2083,7 @@
       }
 
       function armInputEdit(input) {
+        if (!isReviewEditable()) return;
         if (!isEditableGridInput(input)) return;
         if (armedEditInput && armedEditInput !== input) {
           disarmInputEdit(armedEditInput);
@@ -2076,7 +2108,7 @@
         });
 
         input.addEventListener('click', function () {
-          if (document.body.classList.contains('plm-locked')) return;
+          if (!isReviewEditable()) return;
           if (input.classList.contains('is-edit-ready')) return;
           if (input.classList.contains('is-edit-armed')) {
             enableInputEdit(input);
@@ -2093,6 +2125,10 @@
         });
 
         input.addEventListener('keydown', function (event) {
+          if (!isReviewEditable()) {
+            if (event.key !== 'Tab') event.preventDefault();
+            return;
+          }
           if (input.classList.contains('is-edit-ready')) return;
           if (event.key === 'Enter' && input.classList.contains('is-edit-armed')) {
             event.preventDefault();
@@ -2180,6 +2216,7 @@
 
       document.querySelectorAll('.toggle-group').forEach(function (group) {
         group.addEventListener('click', function (event) {
+          if (!isReviewEditable()) return;
           var btn = event.target.closest('button[data-use]');
           if (!btn) return;
           group.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
@@ -2192,6 +2229,7 @@
 
       document.querySelectorAll('[data-accept-column]').forEach(function (button) {
         button.addEventListener('click', function () {
+          if (!isReviewEditable()) return;
           var column = button.closest('[data-column]');
           column.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (row) {
             var input = row.querySelector('.final-input');
@@ -2210,6 +2248,7 @@
 
       document.querySelectorAll('[data-reset-column]').forEach(function (button) {
         button.addEventListener('click', function () {
+          if (!isReviewEditable()) return;
           var column = button.closest('[data-column]');
           column.querySelectorAll('.maisa-compare-table tbody tr').forEach(function (row) {
             var input = row.querySelector('.final-input');
@@ -2282,6 +2321,7 @@
 
       document.querySelectorAll('.row-confirm-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
+          if (!isReviewEditable()) return;
           var row = btn.closest('tr');
           setRowConfirmed(row, !row.classList.contains('is-confirmed'));
         });
@@ -2523,16 +2563,19 @@
 
       function setPlmGridLocked(locked) {
         document.body.classList.toggle('plm-locked', locked);
-        document.querySelectorAll('#bookingGridTable .mandatory-input, #viewV2Walmart .mandatory-input').forEach(function (input) {
+        document.querySelectorAll('#bookingGridTable .mandatory-input, #viewV2Walmart .mandatory-input, .final-input').forEach(function (input) {
           if (locked) {
             input.classList.remove('is-edit-ready', 'is-edit-armed');
             input.setAttribute('readonly', 'readonly');
+            input.setAttribute('tabindex', '-1');
+            if (document.activeElement === input) input.blur();
           } else {
             input.setAttribute('readonly', 'readonly');
+            input.removeAttribute('tabindex');
           }
         });
         document.querySelectorAll('[data-plm-locked-note]').forEach(function (note) {
-          note.classList.toggle('is-hidden', !locked);
+          note.classList.toggle('is-hidden', plm.phase !== 'revisit');
         });
       }
 
@@ -2640,8 +2683,8 @@
       }
 
       function syncSuccessReadonlyGrid() {
-        var on = plm.phase === 'result' && plm.outcome === 'both-ok';
-        document.body.classList.toggle('plm-success-readonly', on);
+        var on = plm.phase !== 'idle';
+        document.body.classList.toggle('plm-grid-readonly', on);
         document.querySelectorAll('#bookingGridTable, #bookingGridTableWalmart').forEach(function (table) {
           table.querySelectorAll('tbody td').forEach(function (td) {
             td.classList.remove('preview-cell-changed');
@@ -2837,13 +2880,6 @@
           applyPlmState('idle');
           return;
         }
-        if (key === 'revisit') {
-          refreshOrderUpdatePreview();
-          plm.outcome = plm.outcome || 'both-ok';
-          applyPlmState('revisit');
-          setPlmGridLocked(true);
-          return;
-        }
         if (key === 'submitting') {
           startSubmitting({ outcome: 'both-ok' });
           return;
@@ -2996,6 +3032,7 @@
       }
 
       function applyStackValueToInput(line) {
+        if (!isReviewEditable()) return;
         var inner = line.closest('.mandatory-cell-inner');
         if (!inner) return;
         var input = inner.querySelector('.mandatory-input');
