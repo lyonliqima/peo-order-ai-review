@@ -21,7 +21,7 @@
     button, input, select { font: inherit; }
     button { cursor: pointer; }
 
-    .page-shell { min-height: 100vh; padding: 12px; }
+    .page-shell { min-height: 100vh; padding: 64px 12px 12px; }
 
     .demo-app-header {
       display: flex;
@@ -446,7 +446,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 56px 16px 16px;
     }
     .excel-modal.is-open { display: flex; }
     .excel-modal__backdrop {
@@ -500,7 +500,10 @@
       flex: 1;
       min-height: 0;
       overflow: auto;
-      padding: 20px 24px;
+      padding: 16px 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
     .excel-modal__body .excel-mock {
       font-size: 11px;
@@ -561,7 +564,8 @@
       padding: 8px 8px 6px;
     }
     .excel-modal__body .maisa-table-scroll {
-      min-height: 360px;
+      min-height: 220px;
+      flex: 1;
     }
     .excel-modal__foot {
       display: flex;
@@ -571,6 +575,7 @@
       border-top: 1px solid #dde1e6;
       background: #fff;
     }
+    .excel-modal__foot [hidden] { display: none !important; }
     .confirm-popover-anchor {
       position: relative;
     }
@@ -628,85 +633,177 @@
     .confirm-popover__actions .btn:not(.primary):hover {
       background: rgba(255, 255, 255, 0.08);
     }
-    .order-update-status {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 32px 24px;
-      text-align: center;
-    }
-    .order-update-status.is-hidden { display: none; }
-    .order-update-status__view {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      text-align: center;
-    }
-    .order-update-status__view.is-hidden { display: none; }
-    .order-update-spinner {
-      width: 44px;
-      height: 44px;
-      border: 3px solid #d3dcf8;
-      border-top-color: #153184;
-      border-radius: 50%;
-      animation: order-update-spin 0.75s linear infinite;
-      margin-bottom: 18px;
-    }
-    @keyframes order-update-spin {
-      to { transform: rotate(360deg); }
-    }
-    .order-update-success-badge {
+    .plm-demo-bar {
+      position: fixed;
+      top: 8px;
+      left: 12px;
+      right: 12px;
+      z-index: 200;
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 52px;
-      height: 52px;
-      margin: 0 0 16px;
-      border-radius: 50%;
-      background: #eaf6f2;
-      color: #00a876;
-      font-size: 28px;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin: 0;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px dashed #c5c9d4;
+      border-radius: 6px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+    .plm-demo-bar__label {
+      font-size: 10px;
       font-weight: 700;
-      line-height: 1;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #737373;
     }
-    .order-update-status__title {
-      margin: 0 0 8px;
-      font-size: 17px;
+    .plm-demo-tab {
+      min-height: 26px;
+      padding: 0 10px;
+      border: 1px solid #dde1e6;
+      border-radius: 999px;
+      background: #f7f8fb;
+      font-size: 11px;
+      font-weight: 600;
+      color: #525252;
+    }
+    .plm-demo-tab:hover { background: #eef0f4; }
+    .plm-demo-tab.is-active {
+      background: #eef3ff;
+      border-color: #c7d7fe;
+      color: #153184;
+    }
+    .plm-flow {
+      flex: 0 0 auto;
+    }
+    .plm-flow.is-hidden { display: none; }
+    .plm-flow__title {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #191919;
+    }
+    .plm-flow__desc {
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #525252;
+    }
+    .plm-facts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 16px;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border: 1px solid #dde1e6;
+      border-radius: 6px;
+      background: #f7f8fb;
+    }
+    .plm-facts.is-hidden { display: none; }
+    .plm-fact__label {
+      font-size: 11px;
+      color: #737373;
+    }
+    .plm-fact__value {
+      margin-top: 2px;
+      font-size: 12px;
       font-weight: 600;
       color: #191919;
     }
-    .order-update-status__text {
-      margin: 0;
-      max-width: 440px;
-      font-size: 13px;
-      line-height: 1.55;
-      color: #525252;
-    }
-    .order-update-status__text strong { color: #153184; }
-    .order-update-status__actions {
-      margin-top: 20px;
+    .plm-banner {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
-      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.45;
     }
-    .excel-modal__dialog.is-update-status #orderUpdateModalBody {
+    .plm-banner.is-hidden { display: none; }
+    .plm-banner.is-info { background: #eef3ff; color: #153184; }
+    .plm-banner.is-success { background: #eaf6f2; color: #006648; }
+    .plm-banner.is-warning { background: #fcf2e6; color: #b26309; }
+    .plm-banner.is-error { background: #fdefef; color: #9e141b; }
+    .plm-tasks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .plm-task {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border: 1px solid #dde1e6;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .plm-task__icon {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 360px;
+      font-size: 12px;
+      font-weight: 700;
     }
-    .excel-modal__dialog.is-update-status .excel-modal__foot {
-      display: none;
+    .plm-task__icon.is-running {
+      border: 2px solid #d3dcf8;
+      border-top-color: #155DFB;
+      animation: order-update-spin 0.75s linear infinite;
+      background: transparent;
+      color: transparent;
     }
-    #orderUpdatePreviewPanel.is-hidden {
-      display: none;
+    .plm-task__icon.is-success { background: #eaf6f2; color: #00a876; }
+    .plm-task__icon.is-failed { background: #fdefef; color: #9e141b; }
+    .plm-task__icon.is-idle { background: #f3f4f6; color: #737373; }
+    .plm-task__name { font-size: 12px; font-weight: 700; }
+    .plm-task__status { font-size: 11px; color: #525252; margin-top: 2px; }
+    .plm-task__time { font-size: 10px; color: #737373; margin-top: 2px; }
+    @keyframes order-update-spin {
+      to { transform: rotate(360deg); }
+    }
+    #orderUpdatePreviewPanel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1;
+    }
+    #orderUpdatePreviewPanel.is-hidden { display: none; }
+    .plm-page-panel {
+      margin-bottom: 15px;
+      padding: 14px 16px;
+      border: 1px solid #dde1e6;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .plm-page-panel.is-hidden { display: none; }
+    .plm-page-panel .plm-flow__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .plm-locked-note {
+      font-size: 11px;
+      font-weight: 600;
+      color: #737373;
+    }
+    .plm-locked-note.is-hidden { display: none; }
+    body.plm-revisit #plmPageStatusPanel { display: none; }
+    body.plm-locked #btnUpdateOrder { display: none; }
+    @media (max-width: 960px) {
+      .plm-facts, .plm-tasks { grid-template-columns: 1fr; }
     }
     .excel-modal__note {
       margin-bottom: 12px;
@@ -853,6 +950,7 @@
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
     .booking-grid-wrap {
       border: 1px solid #dde1e6;
@@ -1081,7 +1179,7 @@
     .field-hover-tip__value { color: #fff; font-weight: 600; }
 
     @media (max-width: 960px) {
-      .page-shell { padding: 0; }
+      .page-shell { padding: 72px 0 0; }
       .maisa-split-layout {
         flex-direction: column;
         min-height: auto;
@@ -1098,6 +1196,17 @@
         <img class="demo-app-logo" src="icons/qima-logo.svg" alt="QIMA" width="126" height="28">
       </a>
     </header>
+    <div class="plm-demo-bar" role="toolbar" aria-label="PLM update flow demo states">
+      <span class="plm-demo-bar__label">Demo flow</span>
+      <button type="button" class="plm-demo-tab is-active" data-plm-demo="idle">Review</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="submitting">Submitting</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="submitted">Submitted</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="result:both-ok">Dual success</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="result:order-fail">Order fail</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="result:excel-fail">Excel fail</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="result:both-fail">Both fail</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="revisit">Revisit / closed</button>
+    </div>
     <div class="maisa-split-layout" id="maisaSplitLayout">
 <div class="maisa-split-pane maisa-split-pane-left" id="maisaLeftPane">
         <div class="maisa-left-scroll">
@@ -1121,6 +1230,8 @@
               <div class="summary-card conflict"><div class="num" id="unmatched-rows-count">3</div><div class="lbl">Unmatched rows</div></div>
             </div>
           </div>
+
+          <div class="plm-page-panel is-hidden" id="plmPageStatusPanel"></div>
 
           <div id="viewV1" class="review-view is-hidden">
           <div class="maisa-compare-panel">
@@ -1376,6 +1487,7 @@
                   <img class="maisa-section-icon" src="icons/container.svg" alt="" width="20" height="20">
                   Mandatory grid editor
                 </span>
+                <span class="plm-locked-note is-hidden" data-plm-locked-note>Locked after submit — refresh the page to see status.</span>
                 <button type="button" class="btn" id="btnToggleOptionalColumns" aria-pressed="false">Show optional columns</button>
               </div>
               <div class="v2-legend maisa-collapse-card is-collapsed" aria-label="Diff legend">
@@ -1752,56 +1864,36 @@
     <div class="excel-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderUpdateModalTitle">
       <div class="excel-modal__head">
         <div>
-          <h2 id="orderUpdateModalTitle">Update order · Final Excel preview</h2>
-          <p>Q2600928854 · Generated from confirmed final values on the left</p>
+          <h2 id="orderUpdateModalTitle">Update order</h2>
+          <p id="orderUpdateModalSub">Q2600928854 · Booking order update + Excel generation</p>
         </div>
         <button type="button" class="excel-modal__close" data-close-modal aria-label="Close">×</button>
       </div>
       <div class="excel-modal__body" id="orderUpdateModalBody">
+        <div class="plm-flow" id="orderUpdateFlowPanel" role="status" aria-live="polite"></div>
         <div id="orderUpdatePreviewPanel">
-        <div class="legend" aria-label="Color legend">
-          <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
-          <span class="legend-item"><span class="legend-swatch changed"></span>Changed</span>
-        </div>
-        <div class="maisa-table-scroll">
-          <table class="excel-mock booking-grid excel-preview-grid" aria-label="Final Excel preview for order update">
-            <thead>
-              <tr id="orderUpdatePreviewHead"></tr>
-            </thead>
-            <tbody id="orderUpdatePreviewBody"></tbody>
-          </table>
-        </div>
-        </div>
-        <div class="order-update-status is-hidden" id="orderUpdateStatusPanel" role="status" aria-live="polite">
-          <div class="order-update-status__view" id="orderUpdateLoadingView">
-            <div class="order-update-spinner" aria-hidden="true"></div>
-            <p class="order-update-status__title">Updating Booking order…</p>
-            <p class="order-update-status__text">Applying your final Excel values to order <strong>Q2600928854</strong>. Please wait.</p>
+          <div class="legend" aria-label="Color legend">
+            <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
+            <span class="legend-item"><span class="legend-swatch changed"></span>Changed</span>
           </div>
-          <div class="order-update-status__view is-hidden" id="orderUpdateSuccessView">
-            <div class="order-update-success-badge" aria-hidden="true">✓</div>
-            <p class="order-update-status__title">Update submitted</p>
-            <p class="order-update-status__text">Return to the <strong>SSO</strong> page to view the update result. You can close this page now.</p>
-            <div class="order-update-status__actions">
-              <button type="button" class="btn" id="btnDownloadOrderExcel">Download Excel</button>
-              <button type="button" class="btn primary" data-close-modal>Close this page</button>
-            </div>
+          <div class="maisa-table-scroll">
+            <table class="excel-mock booking-grid excel-preview-grid" aria-label="Updated booking table after order update">
+              <thead>
+                <tr id="orderUpdatePreviewHead"></tr>
+              </thead>
+              <tbody id="orderUpdatePreviewBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
       <div class="excel-modal__foot" id="orderUpdateModalFoot">
-        <button type="button" class="btn" data-close-modal>Cancel</button>
-        <div class="confirm-popover-anchor">
-          <button type="button" class="btn primary" id="btnConfirmOrderUpdate" aria-expanded="false" aria-controls="orderUpdateConfirmPopover">Confirm update</button>
-          <div class="confirm-popover is-hidden" id="orderUpdateConfirmPopover" role="dialog" aria-labelledby="orderUpdateConfirmTitle">
-            <p class="confirm-popover__title" id="orderUpdateConfirmTitle">Update Booking order?</p>
-            <p class="confirm-popover__text">This will apply the final Excel values to order <strong>Q2600928854</strong>. Please confirm you have reviewed all highlighted changes.</p>
-            <div class="confirm-popover__actions">
-              <button type="button" class="btn" id="btnDismissOrderUpdateConfirm">Not now</button>
-              <button type="button" class="btn primary" id="btnProceedOrderUpdate">Yes, update order</button>
-            </div>
-          </div>
-        </div>
+        <button type="button" class="btn" data-close-modal data-plm-btn="close">Close</button>
+        <button type="button" class="btn primary" id="btnConfirmOrderUpdate" data-plm-btn="confirm">Confirm update</button>
+        <button type="button" class="btn" id="btnDownloadFinalExcel" data-plm-btn="download">Download final Excel</button>
+        <button type="button" class="btn primary" id="btnGenerateAi" data-plm-btn="generate">Generate</button>
+        <button type="button" class="btn" id="btnRetryUpdate" data-plm-btn="retry">Retry update</button>
+        <button type="button" class="btn primary" id="btnGenerateExcel" data-plm-btn="gen-excel">Generate Excel</button>
+        <button type="button" class="btn primary" id="btnResubmit" data-plm-btn="resubmit">Resubmit</button>
       </div>
     </div>
   </div>
@@ -1940,6 +2032,7 @@
         });
 
         input.addEventListener('click', function () {
+          if (document.body.classList.contains('plm-locked')) return;
           if (input.classList.contains('is-edit-ready')) return;
           if (input.classList.contains('is-edit-armed')) {
             enableInputEdit(input);
@@ -2283,54 +2376,314 @@
         });
       }
 
-      function hideOrderUpdateConfirmPopover() {
-        var popover = document.getElementById('orderUpdateConfirmPopover');
-        var trigger = document.getElementById('btnConfirmOrderUpdate');
-        if (popover) popover.classList.add('is-hidden');
-        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      var PLM_STORAGE_KEY = 'plmUpdateFlow';
+      var plm = {
+        phase: 'idle',
+        outcome: 'both-ok',
+        excelReady: false,
+        timers: []
+      };
+
+      var PLM_COPY = {
+        submitting: {
+          title: 'Updating order…',
+          sub: 'Order updating, file updating · Excel may take 10–30s',
+          heading: 'Update in progress',
+          desc: 'Applying confirmed values to the booking order and generating the final Excel in parallel.',
+          banner: { cls: 'info', text: 'Do not download yet. Close keeps this tab; refresh the page later to see status.' },
+          order: { state: 'running', status: 'Applying field changes to order Q2600928854', time: 'Started 09:48:12' },
+          excel: { state: 'running', status: 'Building final Excel from confirmed values', time: 'Started 09:48:12' }
+        },
+        submitted: {
+          title: 'Submitted · Confirm update',
+          sub: 'First load complete · Confirm to commit the update',
+          heading: 'Submitted — waiting for confirm',
+          desc: 'Both jobs finished the first load. Confirm update to commit, then the result page will load.',
+          banner: { cls: 'info', text: 'Review the updated table below, then confirm. Generate is not available until both jobs succeed.' },
+          order: { state: 'success', status: 'Order update ready to confirm', time: 'Loaded 09:48:34' },
+          excel: { state: 'success', status: 'Excel draft ready to confirm', time: 'Loaded 09:48:31' }
+        },
+        confirming: {
+          title: 'Confirming update…',
+          sub: 'Second load / commit in progress',
+          heading: 'Confirming update',
+          desc: 'Committing the order update and finalizing Excel generation.',
+          banner: { cls: 'info', text: 'Please wait. Closing the dialog keeps this tab; refresh later to see the result.' },
+          order: { state: 'running', status: 'Committing order Q2600928854', time: 'Started 09:48:40' },
+          excel: { state: 'running', status: 'Finalizing Excel file', time: 'Started 09:48:40' }
+        },
+        'result:both-ok': {
+          title: 'Update completed',
+          sub: 'Order and Excel both succeeded',
+          heading: 'Update completed',
+          desc: 'Booking order updated and final Excel generated. This review is locked.',
+          banner: { cls: 'success', text: 'Both tasks completed. Download the final Excel, or Generate to re-run AI on the new result.' },
+          order: { state: 'success', status: '6 fields updated on order Q2600928854', time: 'Completed 09:48:34' },
+          excel: { state: 'success', status: 'Q2600928854_final.xlsx ready', time: 'Completed 09:48:31' }
+        },
+        'result:order-fail': {
+          title: 'Order update failed',
+          sub: 'Excel generated · order update did not complete',
+          heading: 'Order update failed',
+          desc: 'Final Excel was generated, but the booking order update failed.',
+          banner: { cls: 'warning', text: 'Retry update uses the same confirmed values. Generate (re-run AI) is not offered because the order was not updated.' },
+          order: { state: 'failed', status: 'Validation failed on Forecast ref.', time: 'Failed 09:48:28' },
+          excel: { state: 'success', status: 'Q2600928854_final.xlsx ready', time: 'Completed 09:48:31' }
+        },
+        'result:excel-fail': {
+          title: 'Excel generation failed',
+          sub: 'Order updated · generate Excel before download',
+          heading: 'Excel generation failed',
+          desc: 'The booking order was updated. File service did not generate Excel.',
+          banner: { cls: 'warning', text: 'Generate Excel first. Download is enabled only after the file exists. Generate (AI) is not offered on a failed Excel job.' },
+          order: { state: 'success', status: '6 fields updated on order Q2600928854', time: 'Completed 09:48:34' },
+          excel: { state: 'failed', status: 'Structure validation failed on row 12', time: 'Failed 09:48:36' }
+        },
+        'result:both-fail': {
+          title: 'Update failed',
+          sub: 'Order and Excel both failed',
+          heading: 'Update failed',
+          desc: 'Neither job completed. No order change was applied.',
+          banner: { cls: 'error', text: 'Resubmit restarts order update and Excel generation together. Generate (AI) is not offered after a failure.' },
+          order: { state: 'failed', status: 'Connection timeout to order-service', time: 'Failed 09:48:30' },
+          excel: { state: 'failed', status: 'Could not read booking template structure', time: 'Failed 09:48:29' }
+        }
+      };
+
+      function copyForPhase(phase, outcome) {
+        if (phase === 'result') return PLM_COPY['result:' + (outcome || 'both-ok')];
+        return PLM_COPY[phase] || PLM_COPY.submitting;
       }
 
-      function resetOrderUpdateModalView() {
-        var dialog = orderUpdateModal ? orderUpdateModal.querySelector('.excel-modal__dialog') : null;
-        var previewPanel = document.getElementById('orderUpdatePreviewPanel');
-        var statusPanel = document.getElementById('orderUpdateStatusPanel');
-        var loadingView = document.getElementById('orderUpdateLoadingView');
-        var successView = document.getElementById('orderUpdateSuccessView');
-        var title = document.getElementById('orderUpdateModalTitle');
-        if (dialog) dialog.classList.remove('is-update-status');
-        if (previewPanel) previewPanel.classList.remove('is-hidden');
-        if (statusPanel) statusPanel.classList.add('is-hidden');
-        if (loadingView) loadingView.classList.remove('is-hidden');
-        if (successView) successView.classList.add('is-hidden');
-        if (title) title.textContent = 'Update order · Final Excel preview';
+      function clearPlmTimers() {
+        plm.timers.forEach(function (id) { window.clearTimeout(id); });
+        plm.timers = [];
       }
 
-      function showOrderUpdateInProgress() {
-        hideOrderUpdateConfirmPopover();
-        var dialog = orderUpdateModal ? orderUpdateModal.querySelector('.excel-modal__dialog') : null;
-        var previewPanel = document.getElementById('orderUpdatePreviewPanel');
-        var statusPanel = document.getElementById('orderUpdateStatusPanel');
-        var loadingView = document.getElementById('orderUpdateLoadingView');
-        var successView = document.getElementById('orderUpdateSuccessView');
-        var title = document.getElementById('orderUpdateModalTitle');
-        if (dialog) dialog.classList.add('is-update-status');
-        if (previewPanel) previewPanel.classList.add('is-hidden');
-        if (statusPanel) statusPanel.classList.remove('is-hidden');
-        if (loadingView) loadingView.classList.remove('is-hidden');
-        if (successView) successView.classList.add('is-hidden');
-        if (title) title.textContent = 'Updating order…';
+      function later(fn, ms) {
+        var id = window.setTimeout(fn, ms);
+        plm.timers.push(id);
+        return id;
       }
 
-      function showOrderUpdateSuccess() {
-        var loadingView = document.getElementById('orderUpdateLoadingView');
-        var successView = document.getElementById('orderUpdateSuccessView');
+      function persistPlm() {
+        try {
+          sessionStorage.setItem(PLM_STORAGE_KEY, JSON.stringify({
+            phase: plm.phase,
+            outcome: plm.outcome,
+            excelReady: plm.excelReady,
+            closed: !(orderUpdateModal && orderUpdateModal.classList.contains('is-open'))
+          }));
+        } catch (err) {}
+      }
+
+      function setPlmGridLocked(locked) {
+        document.body.classList.toggle('plm-locked', locked);
+        document.querySelectorAll('#bookingGridTable .mandatory-input, #viewV2Walmart .mandatory-input').forEach(function (input) {
+          if (locked) {
+            input.classList.remove('is-edit-ready', 'is-edit-armed');
+            input.setAttribute('readonly', 'readonly');
+          } else {
+            input.setAttribute('readonly', 'readonly');
+          }
+        });
+        document.querySelectorAll('[data-plm-locked-note]').forEach(function (note) {
+          note.classList.toggle('is-hidden', !locked);
+        });
+      }
+
+      function setPlmDemoTab(key) {
+        document.querySelectorAll('[data-plm-demo]').forEach(function (btn) {
+          btn.classList.toggle('is-active', btn.getAttribute('data-plm-demo') === key);
+        });
+      }
+
+      function taskIconHtml(state) {
+        if (state === 'running') return '<div class="plm-task__icon is-running" aria-hidden="true"></div>';
+        if (state === 'success') return '<div class="plm-task__icon is-success" aria-hidden="true">✓</div>';
+        if (state === 'failed') return '<div class="plm-task__icon is-failed" aria-hidden="true">!</div>';
+        return '<div class="plm-task__icon is-idle" aria-hidden="true">·</div>';
+      }
+
+      function factsHtml() {
+        return '' +
+          '<div class="plm-facts">' +
+            '<div class="plm-fact"><div class="plm-fact__label">Order type</div><div class="plm-fact__value">Booking · Standard</div></div>' +
+            '<div class="plm-fact"><div class="plm-fact__label">Order</div><div class="plm-fact__value">Q2600928854</div></div>' +
+            '<div class="plm-fact"><div class="plm-fact__label">Files</div><div class="plm-fact__value">Booking Excel · Packing list.xlsx</div></div>' +
+            '<div class="plm-fact"><div class="plm-fact__label">Review time</div><div class="plm-fact__value">17 Aug 2026, 09:42</div></div>' +
+          '</div>';
+      }
+
+      function flowHtml(copy, options) {
+        options = options || {};
+        var showFacts = options.showFacts !== false;
+        var showTitle = options.showTitle !== false;
+        var banner = copy.banner;
+        return '' +
+          (showTitle ? '<p class="plm-flow__title">' + copy.heading + '</p>' : '') +
+          '<p class="plm-flow__desc">' + copy.desc + '</p>' +
+          (showFacts ? factsHtml() : '') +
+          (banner ? '<div class="plm-banner is-' + banner.cls + '">' + banner.text + '</div>' : '') +
+          '<div class="plm-tasks">' +
+            '<div class="plm-task">' + taskIconHtml(copy.order.state) +
+              '<div><div class="plm-task__name">Update order</div><div class="plm-task__status">' + copy.order.status + '</div><div class="plm-task__time">' + copy.order.time + '</div></div></div>' +
+            '<div class="plm-task">' + taskIconHtml(copy.excel.state) +
+              '<div><div class="plm-task__name">Generate Excel</div><div class="plm-task__status">' + copy.excel.status + '</div><div class="plm-task__time">' + copy.excel.time + '</div></div></div>' +
+          '</div>';
+      }
+
+      function visibleButtonsForState() {
+        var phase = plm.phase;
+        var outcome = plm.outcome;
+        var buttons = { close: true, confirm: false, download: false, generate: false, retry: false, 'gen-excel': false, resubmit: false };
+        if (phase === 'submitted') buttons.confirm = true;
+        if (phase === 'result') {
+          if (outcome === 'both-ok') {
+            buttons.download = true;
+            buttons.generate = true;
+          } else if (outcome === 'order-fail') {
+            buttons.retry = true;
+            buttons.download = true;
+          } else if (outcome === 'excel-fail') {
+            buttons['gen-excel'] = !plm.excelReady;
+            buttons.download = !!plm.excelReady;
+            if (plm.excelReady) buttons.generate = true;
+          } else if (outcome === 'both-fail') {
+            buttons.resubmit = true;
+          }
+        }
+        return buttons;
+      }
+
+      function syncPlmButtons() {
+        var vis = visibleButtonsForState();
+        var foot = document.getElementById('orderUpdateModalFoot');
+        if (!foot) return;
+        foot.querySelectorAll('[data-plm-btn]').forEach(function (btn) {
+          var key = btn.getAttribute('data-plm-btn');
+          var show = !!vis[key];
+          if (key === 'close') show = phaseAllowsClose();
+          btn.hidden = !show;
+        });
+      }
+
+      function phaseAllowsClose() {
+        return plm.phase !== 'idle';
+      }
+
+      function renderPageStatusPanel() {
+        var panel = document.getElementById('plmPageStatusPanel');
+        if (!panel) return;
+        var show = plm.phase === 'result' && !(orderUpdateModal && orderUpdateModal.classList.contains('is-open'));
+        if (!show) {
+          panel.classList.add('is-hidden');
+          panel.innerHTML = '';
+          return;
+        }
+        var copy = copyForPhase('result', plm.outcome);
+        var vis = visibleButtonsForState();
+        var actions = '';
+        if (vis.download) actions += '<button type="button" class="btn" data-plm-page-action="download">Download final Excel</button>';
+        if (vis.generate) actions += '<button type="button" class="btn primary" data-plm-page-action="generate">Generate</button>';
+        if (vis.retry) actions += '<button type="button" class="btn" data-plm-page-action="retry">Retry update</button>';
+        if (vis['gen-excel']) actions += '<button type="button" class="btn primary" data-plm-page-action="gen-excel">Generate Excel</button>';
+        if (vis.resubmit) actions += '<button type="button" class="btn primary" data-plm-page-action="resubmit">Resubmit</button>';
+        panel.innerHTML = flowHtml(copy, { showFacts: true }) + (actions ? '<div class="plm-flow__actions">' + actions + '</div>' : '');
+        panel.classList.remove('is-hidden');
+      }
+
+      function applyPlmState(phase, options) {
+        options = options || {};
+        clearPlmTimers();
+        plm.phase = phase;
+        if (options.outcome) plm.outcome = options.outcome;
+        if (typeof options.excelReady === 'boolean') plm.excelReady = options.excelReady;
+        if (phase === 'idle') plm.excelReady = false;
+
+        var locked = phase !== 'idle';
+        setPlmGridLocked(locked);
+        document.body.classList.toggle('plm-revisit', phase === 'revisit');
+
+        var demoKey = phase === 'result' ? ('result:' + plm.outcome) : phase;
+        setPlmDemoTab(demoKey);
+
         var title = document.getElementById('orderUpdateModalTitle');
-        if (loadingView) loadingView.classList.add('is-hidden');
-        if (successView) successView.classList.remove('is-hidden');
-        if (title) title.textContent = 'Update submitted';
+        var sub = document.getElementById('orderUpdateModalSub');
+        var flow = document.getElementById('orderUpdateFlowPanel');
+        var preview = document.getElementById('orderUpdatePreviewPanel');
+        var foot = document.getElementById('orderUpdateModalFoot');
+
+        if (phase === 'idle' || phase === 'revisit') {
+          closeOrderUpdateModalUi();
+          if (flow) {
+            flow.innerHTML = '';
+            flow.classList.add('is-hidden');
+          }
+          if (preview) preview.classList.remove('is-hidden');
+          persistPlm();
+          renderPageStatusPanel();
+          return;
+        }
+
+        var copy = copyForPhase(phase, plm.outcome);
+        if (title) title.textContent = copy.title;
+        if (sub) sub.textContent = copy.sub;
+        if (flow) {
+          flow.classList.remove('is-hidden');
+          flow.innerHTML = flowHtml(copy, {
+            showFacts: phase !== 'submitting' && phase !== 'confirming',
+            showTitle: false
+          });
+        }
+        if (preview) preview.classList.remove('is-hidden');
+        if (foot) foot.style.display = '';
+        refreshOrderUpdatePreview();
+        syncPlmButtons();
+        persistPlm();
+        renderPageStatusPanel();
+      }
+
+      function openOrderUpdateModalUi() {
+        if (!orderUpdateModal) return;
+        orderUpdateModal.classList.add('is-open');
+        orderUpdateModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeOrderUpdateModalUi() {
+        if (!orderUpdateModal) return;
+        orderUpdateModal.classList.remove('is-open');
+        orderUpdateModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      function startSubmitting(options) {
+        options = options || {};
+        if (options.outcome) plm.outcome = options.outcome;
+        plm.excelReady = false;
+        refreshOrderUpdatePreview();
+        openOrderUpdateModalUi();
+        applyPlmState('submitting');
+        later(function () {
+          if (plm.phase !== 'submitting') return;
+          applyPlmState('submitted');
+        }, 1800);
+      }
+
+      function startConfirming() {
+        if (plm.phase !== 'submitted' && plm.phase !== 'confirming') return;
+        openOrderUpdateModalUi();
+        applyPlmState('confirming');
+        later(function () {
+          if (plm.phase !== 'confirming') return;
+          if (plm.outcome === 'both-ok' || plm.outcome === 'order-fail') plm.excelReady = true;
+          applyPlmState('result');
+        }, 1600);
       }
 
       function downloadOrderUpdateExcel() {
+        if (!visibleButtonsForState().download) return;
         var table = document.querySelector('#orderUpdatePreviewPanel .excel-preview-grid');
         if (!table) return;
         var lines = [];
@@ -2346,50 +2699,109 @@
         var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
         var link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'Q2600928854-ai-generated-excel.csv';
+        link.download = 'Q2600928854-final.xlsx.csv';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(link.href);
       }
 
-      function proceedOrderUpdate() {
-        if (!orderUpdateModal || !orderUpdateModal.classList.contains('is-open')) return;
-        showOrderUpdateInProgress();
-        window.setTimeout(function () {
-          showOrderUpdateSuccess();
-        }, 2200);
+      function generateAiReview() {
+        if (!visibleButtonsForState().generate) return;
+        clearPlmTimers();
+        plm.outcome = 'both-ok';
+        plm.excelReady = false;
+        applyPlmState('idle');
+        setPlmDemoTab('idle');
       }
 
-      function showOrderUpdateConfirmPopover() {
-        var popover = document.getElementById('orderUpdateConfirmPopover');
-        var trigger = document.getElementById('btnConfirmOrderUpdate');
-        if (!popover || !trigger) return;
-        popover.classList.remove('is-hidden');
-        trigger.setAttribute('aria-expanded', 'true');
+      function retryOrderUpdate() {
+        plm.outcome = 'both-ok';
+        startSubmitting({ outcome: 'both-ok' });
       }
 
-      function openOrderUpdateModal() {
-        if (!orderUpdateModal) return;
-        resetOrderUpdateModalView();
-        hideOrderUpdateConfirmPopover();
-        refreshOrderUpdatePreview();
-        orderUpdateModal.classList.add('is-open');
-        orderUpdateModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+      function generateExcelAgain() {
+        plm.excelReady = false;
+        openOrderUpdateModalUi();
+        applyPlmState('confirming', { outcome: 'excel-fail' });
+        var flow = document.getElementById('orderUpdateFlowPanel');
+        if (flow) {
+          var copy = {
+            heading: 'Generating Excel…',
+            desc: 'Re-running file generation. Download will unlock when the file is ready.',
+            banner: { cls: 'info', text: 'Order is already updated. Wait for Excel, then download becomes available.' },
+            order: { state: 'success', status: 'Order already updated', time: 'Completed 09:48:34' },
+            excel: { state: 'running', status: 'Generating Excel from confirmed values', time: 'Started now' }
+          };
+          flow.innerHTML = flowHtml(copy, { showFacts: true, showTitle: false });
+        }
+        later(function () {
+          plm.excelReady = true;
+          plm.outcome = 'both-ok';
+          applyPlmState('result', { outcome: 'both-ok', excelReady: true });
+        }, 1600);
+      }
+
+      function resubmitBoth() {
+        plm.outcome = 'both-ok';
+        startSubmitting({ outcome: 'both-ok' });
       }
 
       function closeOrderUpdateModal() {
         if (!orderUpdateModal) return;
-        hideOrderUpdateConfirmPopover();
-        resetOrderUpdateModalView();
-        orderUpdateModal.classList.remove('is-open');
-        orderUpdateModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        var wasOpen = orderUpdateModal.classList.contains('is-open');
+        if (!wasOpen && plm.phase === 'idle') return;
+        closeOrderUpdateModalUi();
+        if (plm.phase === 'idle') {
+          persistPlm();
+          renderPageStatusPanel();
+          return;
+        }
+        applyPlmState('revisit');
+      }
+
+      function openFromIdle() {
+        plm.outcome = 'both-ok';
+        startSubmitting({ outcome: 'both-ok' });
+      }
+
+      function jumpDemo(key) {
+        clearPlmTimers();
+        if (key === 'idle') {
+          plm.excelReady = false;
+          applyPlmState('idle');
+          return;
+        }
+        if (key === 'revisit') {
+          refreshOrderUpdatePreview();
+          plm.outcome = plm.outcome || 'both-ok';
+          applyPlmState('revisit');
+          setPlmGridLocked(true);
+          return;
+        }
+        if (key === 'submitting') {
+          startSubmitting({ outcome: 'both-ok' });
+          return;
+        }
+        if (key === 'submitted') {
+          plm.outcome = 'both-ok';
+          refreshOrderUpdatePreview();
+          openOrderUpdateModalUi();
+          applyPlmState('submitted');
+          return;
+        }
+        if (key.indexOf('result:') === 0) {
+          var outcome = key.split(':')[1];
+          plm.outcome = outcome;
+          plm.excelReady = outcome === 'both-ok' || outcome === 'order-fail';
+          refreshOrderUpdatePreview();
+          openOrderUpdateModalUi();
+          applyPlmState('result', { outcome: outcome, excelReady: plm.excelReady });
+        }
       }
 
       if (btnUpdateOrder) {
-        btnUpdateOrder.addEventListener('click', openOrderUpdateModal);
+        btnUpdateOrder.addEventListener('click', openFromIdle);
       }
 
       if (orderUpdateModal) {
@@ -2400,38 +2812,80 @@
 
       document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape' || !orderUpdateModal || !orderUpdateModal.classList.contains('is-open')) return;
-        var popover = document.getElementById('orderUpdateConfirmPopover');
-        if (popover && !popover.classList.contains('is-hidden')) {
-          event.preventDefault();
-          hideOrderUpdateConfirmPopover();
-          return;
-        }
         closeOrderUpdateModal();
       });
 
       var btnConfirmOrderUpdate = document.getElementById('btnConfirmOrderUpdate');
-      var btnDismissOrderUpdateConfirm = document.getElementById('btnDismissOrderUpdateConfirm');
-      var btnProceedOrderUpdate = document.getElementById('btnProceedOrderUpdate');
       if (btnConfirmOrderUpdate) {
-        btnConfirmOrderUpdate.addEventListener('click', function () {
-          var popover = document.getElementById('orderUpdateConfirmPopover');
-          if (popover && popover.classList.contains('is-hidden')) {
-            showOrderUpdateConfirmPopover();
-          } else {
-            hideOrderUpdateConfirmPopover();
-          }
+        btnConfirmOrderUpdate.addEventListener('click', startConfirming);
+      }
+      var btnDownloadFinalExcel = document.getElementById('btnDownloadFinalExcel');
+      if (btnDownloadFinalExcel) {
+        btnDownloadFinalExcel.addEventListener('click', downloadOrderUpdateExcel);
+      }
+      var btnGenerateAi = document.getElementById('btnGenerateAi');
+      if (btnGenerateAi) {
+        btnGenerateAi.addEventListener('click', generateAiReview);
+      }
+      var btnRetryUpdate = document.getElementById('btnRetryUpdate');
+      if (btnRetryUpdate) {
+        btnRetryUpdate.addEventListener('click', retryOrderUpdate);
+      }
+      var btnGenerateExcel = document.getElementById('btnGenerateExcel');
+      if (btnGenerateExcel) {
+        btnGenerateExcel.addEventListener('click', generateExcelAgain);
+      }
+      var btnResubmit = document.getElementById('btnResubmit');
+      if (btnResubmit) {
+        btnResubmit.addEventListener('click', resubmitBoth);
+      }
+
+      document.querySelectorAll('[data-plm-demo]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          jumpDemo(btn.getAttribute('data-plm-demo'));
+        });
+      });
+
+      var pageStatusPanel = document.getElementById('plmPageStatusPanel');
+      if (pageStatusPanel) {
+        pageStatusPanel.addEventListener('click', function (event) {
+          var actionBtn = event.target.closest('[data-plm-page-action]');
+          if (!actionBtn) return;
+          var action = actionBtn.getAttribute('data-plm-page-action');
+          if (action === 'download') downloadOrderUpdateExcel();
+          if (action === 'generate') generateAiReview();
+          if (action === 'retry') retryOrderUpdate();
+          if (action === 'gen-excel') generateExcelAgain();
+          if (action === 'resubmit') resubmitBoth();
         });
       }
-      if (btnDismissOrderUpdateConfirm) {
-        btnDismissOrderUpdateConfirm.addEventListener('click', hideOrderUpdateConfirmPopover);
-      }
-      if (btnProceedOrderUpdate) {
-        btnProceedOrderUpdate.addEventListener('click', proceedOrderUpdate);
-      }
-      var btnDownloadOrderExcel = document.getElementById('btnDownloadOrderExcel');
-      if (btnDownloadOrderExcel) {
-        btnDownloadOrderExcel.addEventListener('click', downloadOrderUpdateExcel);
-      }
+
+      try {
+        var saved = JSON.parse(sessionStorage.getItem(PLM_STORAGE_KEY) || 'null');
+        if (saved && saved.phase && saved.phase !== 'idle') {
+          plm.outcome = saved.outcome || 'both-ok';
+          plm.excelReady = !!saved.excelReady;
+          refreshOrderUpdatePreview();
+          if (saved.closed) {
+            if (saved.phase === 'submitted') {
+              openOrderUpdateModalUi();
+              applyPlmState('submitted');
+            } else {
+              openOrderUpdateModalUi();
+              applyPlmState('result', {
+                outcome: plm.outcome,
+                excelReady: plm.excelReady || (plm.outcome === 'both-ok' || plm.outcome === 'order-fail')
+              });
+            }
+          } else if (saved.phase === 'submitting' || saved.phase === 'confirming') {
+            openOrderUpdateModalUi();
+            applyPlmState('result', { outcome: plm.outcome || 'both-ok', excelReady: true });
+          } else {
+            openOrderUpdateModalUi();
+            applyPlmState(saved.phase, { outcome: plm.outcome, excelReady: plm.excelReady });
+          }
+        }
+      } catch (err) {}
 
       var fieldHoverTip = document.getElementById('fieldHoverTip');
       var fieldHoverAnchor = null;
