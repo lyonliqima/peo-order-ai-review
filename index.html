@@ -1868,13 +1868,13 @@
     <div class="excel-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderUpdateModalTitle">
       <div class="excel-modal__head">
         <div>
-          <h2 id="orderUpdateModalTitle">Update order</h2>
-          <p id="orderUpdateModalSub">Q2600928854 · Booking order update + Excel generation</p>
+          <h2 id="orderUpdateModalTitle">Update order · Final Excel preview</h2>
+          <p id="orderUpdateModalSub">Q2600928854 · Generated from confirmed final values on the left</p>
         </div>
         <button type="button" class="excel-modal__close" data-close-modal aria-label="Close">×</button>
       </div>
       <div class="excel-modal__body" id="orderUpdateModalBody">
-        <div class="plm-flow" id="orderUpdateFlowPanel" role="status" aria-live="polite"></div>
+        <div class="plm-flow is-hidden" id="orderUpdateFlowPanel" role="status" aria-live="polite"></div>
         <div id="orderUpdatePreviewPanel">
           <div class="legend" aria-label="Color legend">
             <span class="legend-item"><span class="legend-swatch ok"></span>No change</span>
@@ -1891,13 +1891,23 @@
         </div>
       </div>
       <div class="excel-modal__foot" id="orderUpdateModalFoot">
-        <button type="button" class="btn" data-close-modal data-plm-btn="close">Close</button>
-        <button type="button" class="btn primary" id="btnConfirmOrderUpdate" data-plm-btn="confirm">Confirm update</button>
-        <button type="button" class="btn" id="btnDownloadFinalExcel" data-plm-btn="download">Download final Excel</button>
-        <button type="button" class="btn primary" id="btnGenerateAi" data-plm-btn="generate">Generate</button>
-        <button type="button" class="btn" id="btnRetryUpdate" data-plm-btn="retry">Retry update</button>
-        <button type="button" class="btn primary" id="btnGenerateExcel" data-plm-btn="gen-excel">Generate Excel</button>
-        <button type="button" class="btn primary" id="btnResubmit" data-plm-btn="resubmit">Resubmit</button>
+        <button type="button" class="btn" data-close-modal data-plm-btn="close">Cancel</button>
+        <div class="confirm-popover-anchor">
+          <button type="button" class="btn primary" id="btnConfirmOrderUpdate" data-plm-btn="confirm" aria-expanded="false" aria-controls="orderUpdateConfirmPopover">Confirm update</button>
+          <div class="confirm-popover is-hidden" id="orderUpdateConfirmPopover" role="dialog" aria-labelledby="orderUpdateConfirmTitle">
+            <p class="confirm-popover__title" id="orderUpdateConfirmTitle">Update Booking order?</p>
+            <p class="confirm-popover__text">This will apply the final Excel values to order <strong>Q2600928854</strong>. Please confirm you have reviewed all highlighted changes.</p>
+            <div class="confirm-popover__actions">
+              <button type="button" class="btn" id="btnDismissOrderUpdateConfirm">Not now</button>
+              <button type="button" class="btn primary" id="btnProceedOrderUpdate">Yes, update order</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn" id="btnDownloadFinalExcel" data-plm-btn="download" hidden>Download final Excel</button>
+        <button type="button" class="btn primary" id="btnGenerateAi" data-plm-btn="generate" hidden>Generate</button>
+        <button type="button" class="btn" id="btnRetryUpdate" data-plm-btn="retry" hidden>Retry update</button>
+        <button type="button" class="btn primary" id="btnGenerateExcel" data-plm-btn="gen-excel" hidden>Generate Excel</button>
+        <button type="button" class="btn primary" id="btnResubmit" data-plm-btn="resubmit" hidden>Resubmit</button>
       </div>
     </div>
   </div>
@@ -2624,6 +2634,49 @@
         renderPageStatusPanel();
       }
 
+      function hideOrderUpdateConfirmPopover() {
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        var trigger = document.getElementById('btnConfirmOrderUpdate');
+        if (popover) popover.classList.add('is-hidden');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      function showOrderUpdateConfirmPopover() {
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        var trigger = document.getElementById('btnConfirmOrderUpdate');
+        if (!popover || !trigger) return;
+        popover.classList.remove('is-hidden');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
+      function showPreviewModalFooter() {
+        var foot = document.getElementById('orderUpdateModalFoot');
+        if (!foot) return;
+        foot.querySelectorAll('[data-plm-btn]').forEach(function (btn) {
+          var key = btn.getAttribute('data-plm-btn');
+          btn.hidden = key !== 'close' && key !== 'confirm';
+        });
+      }
+
+      function openPreviewModal() {
+        if (!orderUpdateModal) return;
+        hideOrderUpdateConfirmPopover();
+        var title = document.getElementById('orderUpdateModalTitle');
+        var sub = document.getElementById('orderUpdateModalSub');
+        var flow = document.getElementById('orderUpdateFlowPanel');
+        var preview = document.getElementById('orderUpdatePreviewPanel');
+        if (title) title.textContent = 'Update order · Final Excel preview';
+        if (sub) sub.textContent = 'Q2600928854 · Generated from confirmed final values on the left';
+        if (flow) {
+          flow.innerHTML = '';
+          flow.classList.add('is-hidden');
+        }
+        if (preview) preview.classList.remove('is-hidden');
+        refreshOrderUpdatePreview();
+        showPreviewModalFooter();
+        openOrderUpdateModalUi();
+      }
+
       function openOrderUpdateModalUi() {
         if (!orderUpdateModal) return;
         orderUpdateModal.classList.add('is-open');
@@ -2717,6 +2770,7 @@
         if (!orderUpdateModal) return;
         var wasOpen = orderUpdateModal.classList.contains('is-open');
         if (!wasOpen && plm.phase === 'idle') return;
+        hideOrderUpdateConfirmPopover();
         closeOrderUpdateModalUi();
         if (plm.phase === 'idle') {
           persistPlm();
@@ -2726,9 +2780,16 @@
         applyPlmState('revisit');
       }
 
-      function openFromIdle() {
+      function proceedSubmitFromModal() {
+        hideOrderUpdateConfirmPopover();
+        closeOrderUpdateModalUi();
         plm.outcome = 'both-ok';
         startSubmitting({ outcome: 'both-ok' });
+      }
+
+      function openFromIdle() {
+        plm.outcome = 'both-ok';
+        openPreviewModal();
       }
 
       function jumpDemo(key) {
@@ -2776,12 +2837,37 @@
 
       document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape' || !orderUpdateModal || !orderUpdateModal.classList.contains('is-open')) return;
+        var popover = document.getElementById('orderUpdateConfirmPopover');
+        if (popover && !popover.classList.contains('is-hidden')) {
+          event.preventDefault();
+          hideOrderUpdateConfirmPopover();
+          return;
+        }
         closeOrderUpdateModal();
       });
 
       var btnConfirmOrderUpdate = document.getElementById('btnConfirmOrderUpdate');
       if (btnConfirmOrderUpdate) {
-        btnConfirmOrderUpdate.addEventListener('click', startConfirming);
+        btnConfirmOrderUpdate.addEventListener('click', function () {
+          if (plm.phase === 'submitted') {
+            startConfirming();
+            return;
+          }
+          var popover = document.getElementById('orderUpdateConfirmPopover');
+          if (popover && popover.classList.contains('is-hidden')) {
+            showOrderUpdateConfirmPopover();
+          } else {
+            hideOrderUpdateConfirmPopover();
+          }
+        });
+      }
+      var btnDismissOrderUpdateConfirm = document.getElementById('btnDismissOrderUpdateConfirm');
+      if (btnDismissOrderUpdateConfirm) {
+        btnDismissOrderUpdateConfirm.addEventListener('click', hideOrderUpdateConfirmPopover);
+      }
+      var btnProceedOrderUpdate = document.getElementById('btnProceedOrderUpdate');
+      if (btnProceedOrderUpdate) {
+        btnProceedOrderUpdate.addEventListener('click', proceedSubmitFromModal);
       }
       var btnDownloadFinalExcel = document.getElementById('btnDownloadFinalExcel');
       if (btnDownloadFinalExcel) {
