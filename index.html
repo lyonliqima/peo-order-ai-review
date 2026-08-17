@@ -806,6 +806,37 @@
     .plm-locked-note.is-hidden { display: none; }
     body.plm-revisit #plmPageStatusPanel { display: none; }
     body.plm-locked #btnUpdateOrder { display: none; }
+    body.plm-success-readonly .booking-grid .cell-stack {
+      display: none !important;
+    }
+    body.plm-success-readonly .booking-grid tbody td.mandatory-cell,
+    body.plm-success-readonly .booking-grid tbody td.grid-cell {
+      background: #fff;
+    }
+    body.plm-success-readonly .booking-grid .mandatory-input {
+      pointer-events: none;
+      cursor: default;
+      height: 28px;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 3px;
+      background: rgba(255,255,255,.92);
+      font-weight: 600;
+      color: #191919;
+      box-shadow: none;
+    }
+    body.plm-success-readonly .booking-grid td.preview-cell-changed .mandatory-input {
+      border-color: #00a876;
+      background: #eaf6f2;
+      color: #006648;
+      box-shadow: inset 0 0 0 1px #00a876;
+    }
+    body.plm-success-readonly .booking-grid td.has-long-content .mandatory-input {
+      white-space: pre-wrap;
+      height: auto;
+      min-height: 28px;
+      max-height: 80px;
+      overflow-y: auto;
+    }
     @media (max-width: 960px) {
       .plm-facts, .plm-tasks { grid-template-columns: 1fr; }
     }
@@ -1204,7 +1235,6 @@
       <span class="plm-demo-bar__label">Demo flow</span>
       <button type="button" class="plm-demo-tab is-active" data-plm-demo="idle">Review</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="submitting">Submitting</button>
-      <button type="button" class="plm-demo-tab" data-plm-demo="submitted">Submitted</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:both-ok">Dual success</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:order-fail">Order fail</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:excel-fail">Excel fail</button>
@@ -2551,7 +2581,6 @@
         var phase = plm.phase;
         var outcome = plm.outcome;
         var buttons = { close: true, confirm: false, download: false, generate: false, retry: false, 'gen-excel': false, resubmit: false };
-        if (phase === 'submitted') buttons.confirm = true;
         if (phase === 'result') {
           if (outcome === 'both-ok') {
             buttons.download = true;
@@ -2589,7 +2618,7 @@
       function renderPageStatusPanel() {
         var panel = document.getElementById('plmPageStatusPanel');
         if (!panel) return;
-        var show = plm.phase === 'submitting' || plm.phase === 'submitted' || plm.phase === 'confirming' || plm.phase === 'result';
+        var show = plm.phase === 'submitting' || plm.phase === 'confirming' || plm.phase === 'result';
         if (!show) {
           panel.classList.add('is-hidden');
           panel.innerHTML = '';
@@ -2598,7 +2627,6 @@
         var copy = copyForPhase(plm.phase, plm.outcome);
         var vis = visibleButtonsForState();
         var actions = '';
-        if (vis.confirm) actions += '<button type="button" class="btn primary" data-plm-page-action="confirm">Confirm update</button>';
         if (vis.download) actions += '<button type="button" class="btn" data-plm-page-action="download">Download final Excel</button>';
         if (vis.generate) actions += '<button type="button" class="btn primary" data-plm-page-action="generate">Generate</button>';
         if (vis.retry) actions += '<button type="button" class="btn" data-plm-page-action="retry">Retry update</button>';
@@ -2609,6 +2637,24 @@
           showTitle: true
         }) + (actions ? '<div class="plm-flow__actions">' + actions + '</div>' : '');
         panel.classList.remove('is-hidden');
+      }
+
+      function syncSuccessReadonlyGrid() {
+        var on = plm.phase === 'result' && plm.outcome === 'both-ok';
+        document.body.classList.toggle('plm-success-readonly', on);
+        document.querySelectorAll('#bookingGridTable, #bookingGridTableWalmart').forEach(function (table) {
+          table.querySelectorAll('tbody td').forEach(function (td) {
+            td.classList.remove('preview-cell-changed');
+            if (!on) return;
+            var stackEl = td.querySelector('.cell-stack');
+            var supplier = readStackLine(stackEl, 'supplier');
+            var input = td.querySelector('.mandatory-input');
+            var finalValue = input ? input.value.trim() : '';
+            if (isPreviewCellChanged(td, supplier, finalValue)) {
+              td.classList.add('preview-cell-changed');
+            }
+          });
+        });
       }
 
       function applyPlmState(phase, options) {
@@ -2622,6 +2668,7 @@
         var locked = phase !== 'idle';
         setPlmGridLocked(locked);
         document.body.classList.toggle('plm-revisit', phase === 'revisit');
+        syncSuccessReadonlyGrid();
 
         var demoKey = phase === 'result' ? ('result:' + plm.outcome) : phase;
         setPlmDemoTab(demoKey);
@@ -2699,18 +2746,9 @@
         applyPlmState('submitting');
         later(function () {
           if (plm.phase !== 'submitting') return;
-          applyPlmState('submitted');
+          plm.excelReady = true;
+          applyPlmState('result', { outcome: plm.outcome || 'both-ok', excelReady: true });
         }, 1800);
-      }
-
-      function startConfirming() {
-        if (plm.phase !== 'submitted' && plm.phase !== 'confirming') return;
-        applyPlmState('confirming');
-        later(function () {
-          if (plm.phase !== 'confirming') return;
-          if (plm.outcome === 'both-ok' || plm.outcome === 'order-fail') plm.excelReady = true;
-          applyPlmState('result');
-        }, 1600);
       }
 
       function downloadOrderUpdateExcel() {
@@ -2810,12 +2848,6 @@
           startSubmitting({ outcome: 'both-ok' });
           return;
         }
-        if (key === 'submitted') {
-          plm.outcome = 'both-ok';
-          refreshOrderUpdatePreview();
-          applyPlmState('submitted');
-          return;
-        }
         if (key.indexOf('result:') === 0) {
           var outcome = key.split(':')[1];
           plm.outcome = outcome;
@@ -2849,10 +2881,6 @@
       var btnConfirmOrderUpdate = document.getElementById('btnConfirmOrderUpdate');
       if (btnConfirmOrderUpdate) {
         btnConfirmOrderUpdate.addEventListener('click', function () {
-          if (plm.phase === 'submitted') {
-            startConfirming();
-            return;
-          }
           var popover = document.getElementById('orderUpdateConfirmPopover');
           if (popover && popover.classList.contains('is-hidden')) {
             showOrderUpdateConfirmPopover();
@@ -2902,7 +2930,6 @@
           var actionBtn = event.target.closest('[data-plm-page-action]');
           if (!actionBtn) return;
           var action = actionBtn.getAttribute('data-plm-page-action');
-          if (action === 'confirm') startConfirming();
           if (action === 'download') downloadOrderUpdateExcel();
           if (action === 'generate') generateAiReview();
           if (action === 'retry') retryOrderUpdate();
@@ -2918,8 +2945,7 @@
           plm.excelReady = !!saved.excelReady;
           refreshOrderUpdatePreview();
           if (saved.phase === 'revisit' || saved.closed) {
-            if (saved.phase === 'submitted') applyPlmState('submitted');
-            else if (saved.phase === 'submitting' || saved.phase === 'confirming' || saved.phase === 'revisit') {
+            if (saved.phase === 'submitting' || saved.phase === 'confirming' || saved.phase === 'submitted' || saved.phase === 'revisit') {
               applyPlmState('result', {
                 outcome: plm.outcome,
                 excelReady: plm.excelReady || (plm.outcome === 'both-ok' || plm.outcome === 'order-fail')
