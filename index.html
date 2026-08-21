@@ -732,6 +732,7 @@
       gap: 10px;
       margin-bottom: 4px;
     }
+    .plm-tasks.is-single { grid-template-columns: 1fr; }
     .plm-task {
       display: flex;
       gap: 10px;
@@ -805,7 +806,29 @@
     }
     .plm-locked-note.is-hidden { display: none; }
     body.plm-revisit #plmPageStatusPanel { display: none; }
-    body.plm-locked #btnUpdateOrder { display: none; }
+    body.plm-locked #btnUpdateOrder,
+    body.plm-locked #btnUploadExcelUpdate { display: none; }
+    body.plm-locked .action-bar--dock { display: none; }
+    .plm-excel-grid-note {
+      display: none;
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #f7f8fb;
+      border: 1px solid #dde1e6;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #525252;
+    }
+    body.plm-excel-update .plm-excel-grid-note { display: block; }
+    body.plm-excel-update #bookingGridWrap,
+    body.plm-excel-update .v2-legend,
+    body.plm-excel-update #btnToggleOptionalColumns,
+    body.plm-excel-update #bookingGridTableWalmart,
+    body.plm-excel-update .v2-walmart-legend,
+    body.plm-excel-update .walmart-forecast-banner {
+      display: none !important;
+    }
     body.plm-grid-readonly .booking-grid .cell-stack {
       display: none !important;
     }
@@ -888,6 +911,12 @@
       color: #737373;
       background: #fff;
     }
+    .review-result.is-complete {
+      color: #006648;
+      background: #eaf6f2;
+      border-color: #c5e8d8;
+    }
+    .review-result.is-complete #pending-count { display: none; }
 
     .review-view.is-hidden { display: none; }
 
@@ -993,11 +1022,11 @@
       border: 1px solid rgba(0,0,0,.08);
       margin-top: 1px;
     }
-    .booking-grid-wrap.optional-columns-hidden .grid-head,
-    .booking-grid-wrap.optional-columns-hidden .grid-cell {
+    .booking-grid-wrap.optional-columns-hidden .grid-head:not(.optional-col-diff),
+    .booking-grid-wrap.optional-columns-hidden .grid-cell:not(.optional-col-diff) {
       display: none;
     }
-    .booking-grid-wrap.optional-columns-hidden col.col-grid {
+    .booking-grid-wrap.optional-columns-hidden col.col-grid:not(.optional-col-diff) {
       width: 0 !important;
       max-width: 0 !important;
     }
@@ -1263,6 +1292,7 @@
       <button type="button" class="plm-demo-tab is-active" data-plm-demo="idle">Review</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="submitting">Submitting</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:both-ok">Dual success</button>
+      <button type="button" class="plm-demo-tab" data-plm-demo="result:excel-upload">Excel upload</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:order-fail">Order fail</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:excel-fail">Excel fail</button>
       <button type="button" class="plm-demo-tab" data-plm-demo="result:both-fail">Both fail</button>
@@ -1278,7 +1308,7 @@
                 <span class="meta-chip">Order Q2600928854</span>
               </div>
             </div>
-            <span class="review-result"><strong id="pending-count">13</strong> pending review</span>
+            <span class="review-result" id="reviewResultBadge"><strong id="pending-count">13</strong> <span id="reviewResultLabel">pending review</span></span>
           </div>
 
           <div class="maisa-section maisa-card-bg">
@@ -1548,8 +1578,9 @@
                   Mandatory grid editor
                 </span>
                 <span class="plm-locked-note is-hidden" data-plm-locked-note>Locked after submit — refresh the page to see status.</span>
-                <button type="button" class="btn" id="btnToggleOptionalColumns" aria-pressed="false">Show optional columns</button>
+                <button type="button" class="btn" id="btnToggleOptionalColumns" aria-pressed="false">Show all optional columns</button>
               </div>
+              <p class="plm-excel-grid-note" id="plmExcelGridNote">No HTML change table — this order was updated from an uploaded Excel file. Regenerate AI summary if you need to review the new order.</p>
               <div class="v2-legend maisa-collapse-card is-collapsed" aria-label="Diff legend">
                 <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
                   <span class="v2-legend__title">Diff Excel color legend</span>
@@ -1783,6 +1814,7 @@
               <div class="qima-block-banner qima-block-banner--warning walmart-forecast-banner" role="status">
                 <span class="qima-block-banner__message">Booking forecast was used on <strong>48</strong> field comparison(s) (PO / item / UPC). <strong>13</strong> of those need review — see the diff Excel.</span>
               </div>
+              <p class="plm-excel-grid-note">No HTML change table — this order was updated from an uploaded Excel file.</p>
               <div class="v2-walmart-legend" aria-label="Walmart diff legend">
                 <div class="v2-walmart-legend__section">
                   <div class="v2-legend__title">Cell colours — supplier vs PL/LP AI</div>
@@ -1906,6 +1938,8 @@
           <div class="btn-row">
             <button type="button" class="btn">Download diff Excel</button>
             <button type="button" class="btn">Export AI-generated Excel</button>
+            <button type="button" class="btn" id="btnUploadExcelUpdate">Upload Excel and update</button>
+            <input type="file" id="excelUpdateFileInput" accept=".xlsx,.xls,.csv" hidden>
             <button type="button" class="btn primary" id="btnUpdateOrder">Update order</button>
           </div>
         </div>
@@ -1960,9 +1994,7 @@
           </div>
         </div>
         <button type="button" class="btn" id="btnDownloadFinalExcel" data-plm-btn="download" hidden>Download final Excel</button>
-        <button type="button" class="btn primary" id="btnGenerateAi" data-plm-btn="generate" hidden>Generate</button>
-        <button type="button" class="btn" id="btnRetryUpdate" data-plm-btn="retry" hidden>Retry update</button>
-        <button type="button" class="btn primary" id="btnGenerateExcel" data-plm-btn="gen-excel" hidden>Generate Excel</button>
+        <button type="button" class="btn primary" id="btnGenerateAi" data-plm-btn="generate" hidden>Regenerate AI summary</button>
         <button type="button" class="btn primary" id="btnResubmit" data-plm-btn="resubmit" hidden>Resubmit</button>
       </div>
     </div>
@@ -2003,7 +2035,7 @@
         var flexCol = null;
         if (optionalHidden) {
           cols.forEach(function (col) {
-            if (col.classList.contains('col-mandatory')) {
+            if (col.classList.contains('col-mandatory') || col.classList.contains('optional-col-diff')) {
               flexCol = col;
             }
           });
@@ -2015,14 +2047,44 @@
         }
       }
 
+      var OPTIONAL_DIFF_CLASSES = [
+        'cell-conflict', 'cell-ai', 'cell-miss', 'cell-mandatory-warn', 'cell-default',
+        'cell-wisteria', 'cell-caramel', 'cell-peach', 'cell-steel', 'cell-orchid', 'cell-light-gold'
+      ];
+
+      function markOptionalDiffColumns(table) {
+        if (!table) return;
+        var headRow = table.querySelector('thead tr');
+        var cols = table.querySelectorAll('colgroup col');
+        if (!headRow) return;
+        Array.prototype.forEach.call(headRow.children, function (th, index) {
+          if (!th.classList.contains('grid-head')) return;
+          var hasDiff = false;
+          table.querySelectorAll('tbody tr').forEach(function (tr) {
+            var td = tr.cells[index];
+            if (!td) return;
+            if (OPTIONAL_DIFF_CLASSES.some(function (cls) { return td.classList.contains(cls); })) {
+              hasDiff = true;
+            }
+          });
+          if (!hasDiff) return;
+          th.classList.add('optional-col-diff');
+          if (cols[index]) cols[index].classList.add('optional-col-diff');
+          table.querySelectorAll('tbody tr').forEach(function (tr) {
+            if (tr.cells[index]) tr.cells[index].classList.add('optional-col-diff');
+          });
+        });
+      }
+
       if (bookingGridWrap && btnToggleOptionalColumns) {
         btnToggleOptionalColumns.addEventListener('click', function () {
           var hidden = bookingGridWrap.classList.toggle('optional-columns-hidden');
-          btnToggleOptionalColumns.textContent = hidden ? 'Show optional columns' : 'Hide optional columns';
+          btnToggleOptionalColumns.textContent = hidden ? 'Show all optional columns' : 'Hide extra optional columns';
           btnToggleOptionalColumns.setAttribute('aria-pressed', hidden ? 'false' : 'true');
           syncBookingGridFlexColumn();
         });
       }
+      markOptionalDiffColumns(bookingGridTable);
       syncBookingGridFlexColumn();
 
       document.querySelectorAll('.maisa-collapse-card').forEach(function (card) {
@@ -2290,6 +2352,22 @@
         updateUnmatchedRowsCount();
       }
 
+      function syncPendingBadge() {
+        var badge = document.getElementById('reviewResultBadge');
+        var label = document.getElementById('reviewResultLabel');
+        if (!badge || !pendingEl) return;
+        if (plm.phase === 'idle') {
+          badge.classList.remove('is-complete');
+          pendingEl.hidden = false;
+          if (label) label.textContent = 'pending review';
+          updatePendingCount();
+        } else {
+          badge.classList.add('is-complete');
+          pendingEl.hidden = true;
+          if (label) label.textContent = 'Review complete';
+        }
+      }
+
       function updateUnmatchedRowsCount() {
         var unmatchedEl = document.getElementById('unmatched-rows-count');
         if (!unmatchedEl) return;
@@ -2465,6 +2543,8 @@
         phase: 'idle',
         outcome: 'both-ok',
         excelReady: false,
+        updateSource: 'html',
+        uploadedFileName: '',
         timers: []
       };
 
@@ -2477,6 +2557,15 @@
           banner: { cls: 'info', text: 'Do not download yet. This tab stays open; refresh the page later to see status.' },
           order: { state: 'running', status: 'Applying field changes to order Q2600928854', time: 'Started 09:48:12' },
           excel: { state: 'running', status: 'Building final Excel from confirmed values', time: 'Started 09:48:12' }
+        },
+        'submitting-excel': {
+          title: 'Updating order…',
+          sub: 'Uploading Excel and updating the booking order',
+          heading: 'Update in progress',
+          desc: 'Replacing the booking order from the uploaded Excel file.',
+          banner: { cls: 'info', text: 'This path has no HTML change table. Status will appear on this page when the update finishes.' },
+          order: { state: 'running', status: 'Updating order Q2600928854 from uploaded Excel', time: 'Started 09:48:12' },
+          excel: null
         },
         submitted: {
           title: 'Submitted · Confirm update',
@@ -2501,25 +2590,34 @@
           sub: 'Order and Excel both succeeded',
           heading: 'Update completed',
           desc: 'Booking order updated and final Excel generated. This review is locked.',
-          banner: { cls: 'success', text: 'Both tasks completed. Download the final Excel, or Generate to re-run AI on the new result.' },
+          banner: { cls: 'success', text: 'Both tasks completed. Download the final Excel, or Regenerate AI summary to review the updated order.' },
           order: { state: 'success', status: '6 fields updated on order Q2600928854', time: 'Completed 09:48:34' },
           excel: { state: 'success', status: 'Q2600928854_final.xlsx ready', time: 'Completed 09:48:31' }
+        },
+        'result:excel-upload': {
+          title: 'Update completed',
+          sub: 'Order updated from uploaded Excel',
+          heading: 'Update completed',
+          desc: 'Booking order updated from the uploaded Excel. This review is locked.',
+          banner: { cls: 'success', text: 'No HTML change table for this path. Regenerate AI summary if you need to review the new order.' },
+          order: { state: 'success', status: 'Order Q2600928854 updated from uploaded Excel', time: 'Completed 09:48:34' },
+          excel: null
         },
         'result:order-fail': {
           title: 'Order update failed',
           sub: 'Excel generated · order update did not complete',
           heading: 'Order update failed',
           desc: 'Final Excel was generated, but the booking order update failed.',
-          banner: { cls: 'warning', text: 'Retry update uses the same confirmed values. Generate (re-run AI) is not offered because the order was not updated.' },
+          banner: { cls: 'warning', text: 'Resubmit retries both jobs with the same confirmed values.' },
           order: { state: 'failed', status: 'Validation failed on Forecast ref.', time: 'Failed 09:48:28' },
           excel: { state: 'success', status: 'Q2600928854_final.xlsx ready', time: 'Completed 09:48:31' }
         },
         'result:excel-fail': {
           title: 'Excel generation failed',
-          sub: 'Order updated · generate Excel before download',
+          sub: 'Order updated · Excel did not generate',
           heading: 'Excel generation failed',
           desc: 'The booking order was updated. File service did not generate Excel.',
-          banner: { cls: 'warning', text: 'Generate Excel first. Download is enabled only after the file exists. Generate (AI) is not offered on a failed Excel job.' },
+          banner: { cls: 'warning', text: 'Resubmit retries both jobs. Download is not offered until both succeed.' },
           order: { state: 'success', status: '6 fields updated on order Q2600928854', time: 'Completed 09:48:34' },
           excel: { state: 'failed', status: 'Structure validation failed on row 12', time: 'Failed 09:48:36' }
         },
@@ -2528,13 +2626,17 @@
           sub: 'Order and Excel both failed',
           heading: 'Update failed',
           desc: 'Neither job completed. No order change was applied.',
-          banner: { cls: 'error', text: 'Resubmit restarts order update and Excel generation together. Generate (AI) is not offered after a failure.' },
+          banner: { cls: 'error', text: 'Resubmit restarts order update and Excel generation together.' },
           order: { state: 'failed', status: 'Connection timeout to order-service', time: 'Failed 09:48:30' },
           excel: { state: 'failed', status: 'Could not read booking template structure', time: 'Failed 09:48:29' }
         }
       };
 
       function copyForPhase(phase, outcome) {
+        if (plm.updateSource === 'excel') {
+          if (phase === 'submitting') return PLM_COPY['submitting-excel'];
+          if (phase === 'result') return PLM_COPY['result:excel-upload'];
+        }
         if (phase === 'result') return PLM_COPY['result:' + (outcome || 'both-ok')];
         return PLM_COPY[phase] || PLM_COPY.submitting;
       }
@@ -2556,6 +2658,8 @@
             phase: plm.phase,
             outcome: plm.outcome,
             excelReady: plm.excelReady,
+            updateSource: plm.updateSource,
+            uploadedFileName: plm.uploadedFileName,
             closed: !(orderUpdateModal && orderUpdateModal.classList.contains('is-open'))
           }));
         } catch (err) {}
@@ -2593,11 +2697,14 @@
       }
 
       function factsHtml() {
+        var files = plm.updateSource === 'excel' && plm.uploadedFileName
+          ? plm.uploadedFileName
+          : 'Booking Excel · Packing list.xlsx';
         return '' +
           '<div class="plm-facts">' +
             '<div class="plm-fact"><div class="plm-fact__label">Order type</div><div class="plm-fact__value">Booking · Standard</div></div>' +
             '<div class="plm-fact"><div class="plm-fact__label">Order</div><div class="plm-fact__value">Q2600928854</div></div>' +
-            '<div class="plm-fact"><div class="plm-fact__label">Files</div><div class="plm-fact__value">Booking Excel · Packing list.xlsx</div></div>' +
+            '<div class="plm-fact"><div class="plm-fact__label">Files</div><div class="plm-fact__value">' + files + '</div></div>' +
             '<div class="plm-fact"><div class="plm-fact__label">Review time</div><div class="plm-fact__value">17 Aug 2026, 09:42</div></div>' +
           '</div>';
       }
@@ -2607,35 +2714,33 @@
         var showFacts = options.showFacts !== false;
         var showTitle = options.showTitle !== false;
         var banner = copy.banner;
+        var tasks = '<div class="plm-tasks' + (copy.excel ? '' : ' is-single') + '">' +
+          '<div class="plm-task">' + taskIconHtml(copy.order.state) +
+            '<div><div class="plm-task__name">Update order</div><div class="plm-task__status">' + copy.order.status + '</div><div class="plm-task__time">' + copy.order.time + '</div></div></div>';
+        if (copy.excel) {
+          tasks += '<div class="plm-task">' + taskIconHtml(copy.excel.state) +
+            '<div><div class="plm-task__name">Generate Excel</div><div class="plm-task__status">' + copy.excel.status + '</div><div class="plm-task__time">' + copy.excel.time + '</div></div></div>';
+        }
+        tasks += '</div>';
         return '' +
           (showTitle ? '<p class="plm-flow__title">' + copy.heading + '</p>' : '') +
           '<p class="plm-flow__desc">' + copy.desc + '</p>' +
           (showFacts ? factsHtml() : '') +
           (banner ? '<div class="plm-banner is-' + banner.cls + '">' + banner.text + '</div>' : '') +
-          '<div class="plm-tasks">' +
-            '<div class="plm-task">' + taskIconHtml(copy.order.state) +
-              '<div><div class="plm-task__name">Update order</div><div class="plm-task__status">' + copy.order.status + '</div><div class="plm-task__time">' + copy.order.time + '</div></div></div>' +
-            '<div class="plm-task">' + taskIconHtml(copy.excel.state) +
-              '<div><div class="plm-task__name">Generate Excel</div><div class="plm-task__status">' + copy.excel.status + '</div><div class="plm-task__time">' + copy.excel.time + '</div></div></div>' +
-          '</div>';
+          tasks;
       }
 
       function visibleButtonsForState() {
         var phase = plm.phase;
         var outcome = plm.outcome;
-        var buttons = { close: true, confirm: false, download: false, generate: false, retry: false, 'gen-excel': false, resubmit: false };
+        var buttons = { close: true, confirm: false, download: false, generate: false, resubmit: false };
         if (phase === 'result') {
           if (outcome === 'both-ok') {
             buttons.download = true;
             buttons.generate = true;
-          } else if (outcome === 'order-fail') {
-            buttons.retry = true;
-            buttons.download = true;
-          } else if (outcome === 'excel-fail') {
-            buttons['gen-excel'] = !plm.excelReady;
-            buttons.download = !!plm.excelReady;
-            if (plm.excelReady) buttons.generate = true;
-          } else if (outcome === 'both-fail') {
+          } else if (outcome === 'excel-upload') {
+            buttons.generate = true;
+          } else {
             buttons.resubmit = true;
           }
         }
@@ -2671,9 +2776,7 @@
         var vis = visibleButtonsForState();
         var actions = '';
         if (vis.download) actions += '<button type="button" class="btn" data-plm-page-action="download">Download final Excel</button>';
-        if (vis.generate) actions += '<button type="button" class="btn primary" data-plm-page-action="generate">Generate</button>';
-        if (vis.retry) actions += '<button type="button" class="btn" data-plm-page-action="retry">Retry update</button>';
-        if (vis['gen-excel']) actions += '<button type="button" class="btn primary" data-plm-page-action="gen-excel">Generate Excel</button>';
+        if (vis.generate) actions += '<button type="button" class="btn primary" data-plm-page-action="generate">Regenerate AI summary</button>';
         if (vis.resubmit) actions += '<button type="button" class="btn primary" data-plm-page-action="resubmit">Resubmit</button>';
         panel.innerHTML = flowHtml(copy, {
           showFacts: plm.phase !== 'submitting' && plm.phase !== 'confirming',
@@ -2706,12 +2809,18 @@
         plm.phase = phase;
         if (options.outcome) plm.outcome = options.outcome;
         if (typeof options.excelReady === 'boolean') plm.excelReady = options.excelReady;
-        if (phase === 'idle') plm.excelReady = false;
+        if (phase === 'idle') {
+          plm.excelReady = false;
+          plm.updateSource = 'html';
+          plm.uploadedFileName = '';
+        }
 
         var locked = phase !== 'idle';
         setPlmGridLocked(locked);
         document.body.classList.toggle('plm-revisit', phase === 'revisit');
+        document.body.classList.toggle('plm-excel-update', plm.updateSource === 'excel' && phase !== 'idle');
         syncSuccessReadonlyGrid();
+        syncPendingBadge();
 
         var demoKey = phase === 'result' ? ('result:' + plm.outcome) : phase;
         setPlmDemoTab(demoKey);
@@ -2784,13 +2893,16 @@
       function startSubmitting(options) {
         options = options || {};
         if (options.outcome) plm.outcome = options.outcome;
+        if (options.updateSource) plm.updateSource = options.updateSource;
+        if (plm.updateSource !== 'excel') plm.updateSource = 'html';
         plm.excelReady = false;
-        refreshOrderUpdatePreview();
+        if (plm.updateSource !== 'excel') refreshOrderUpdatePreview();
         applyPlmState('submitting');
         later(function () {
           if (plm.phase !== 'submitting') return;
-          plm.excelReady = true;
-          applyPlmState('result', { outcome: plm.outcome || 'both-ok', excelReady: true });
+          plm.excelReady = plm.updateSource !== 'excel';
+          var outcome = plm.updateSource === 'excel' ? 'excel-upload' : (plm.outcome || 'both-ok');
+          applyPlmState('result', { outcome: outcome, excelReady: plm.excelReady });
         }, 1800);
       }
 
@@ -2823,28 +2935,23 @@
         clearPlmTimers();
         plm.outcome = 'both-ok';
         plm.excelReady = false;
+        plm.updateSource = 'html';
+        plm.uploadedFileName = '';
         applyPlmState('idle');
         setPlmDemoTab('idle');
       }
 
-      function retryOrderUpdate() {
-        plm.outcome = 'both-ok';
-        startSubmitting({ outcome: 'both-ok' });
-      }
-
-      function generateExcelAgain() {
-        plm.excelReady = false;
-        applyPlmState('confirming', { outcome: 'excel-fail' });
-        later(function () {
-          plm.excelReady = true;
-          plm.outcome = 'both-ok';
-          applyPlmState('result', { outcome: 'both-ok', excelReady: true });
-        }, 1600);
-      }
-
       function resubmitBoth() {
+        plm.updateSource = 'html';
         plm.outcome = 'both-ok';
-        startSubmitting({ outcome: 'both-ok' });
+        startSubmitting({ outcome: 'both-ok', updateSource: 'html' });
+      }
+
+      function startExcelUpload(fileName) {
+        plm.updateSource = 'excel';
+        plm.uploadedFileName = fileName || 'booking-update.xlsx';
+        plm.outcome = 'excel-upload';
+        startSubmitting({ outcome: 'excel-upload', updateSource: 'excel' });
       }
 
       function closeOrderUpdateModal() {
@@ -2864,11 +2971,13 @@
       function proceedSubmitFromModal() {
         hideOrderUpdateConfirmPopover();
         closeOrderUpdateModalUi();
+        plm.updateSource = 'html';
         plm.outcome = 'both-ok';
-        startSubmitting({ outcome: 'both-ok' });
+        startSubmitting({ outcome: 'both-ok', updateSource: 'html' });
       }
 
       function openFromIdle() {
+        plm.updateSource = 'html';
         plm.outcome = 'both-ok';
         openPreviewModal();
       }
@@ -2877,17 +2986,28 @@
         clearPlmTimers();
         if (key === 'idle') {
           plm.excelReady = false;
+          plm.updateSource = 'html';
+          plm.uploadedFileName = '';
           applyPlmState('idle');
           return;
         }
         if (key === 'submitting') {
-          startSubmitting({ outcome: 'both-ok' });
+          plm.updateSource = 'html';
+          startSubmitting({ outcome: 'both-ok', updateSource: 'html' });
+          return;
+        }
+        if (key === 'result:excel-upload') {
+          plm.updateSource = 'excel';
+          plm.uploadedFileName = plm.uploadedFileName || 'booking-update.xlsx';
+          plm.excelReady = false;
+          applyPlmState('result', { outcome: 'excel-upload', excelReady: false });
           return;
         }
         if (key.indexOf('result:') === 0) {
           var outcome = key.split(':')[1];
+          plm.updateSource = 'html';
           plm.outcome = outcome;
-          plm.excelReady = outcome === 'both-ok' || outcome === 'order-fail';
+          plm.excelReady = outcome === 'both-ok';
           refreshOrderUpdatePreview();
           applyPlmState('result', { outcome: outcome, excelReady: plm.excelReady });
         }
@@ -2895,6 +3015,20 @@
 
       if (btnUpdateOrder) {
         btnUpdateOrder.addEventListener('click', openFromIdle);
+      }
+      var btnUploadExcelUpdate = document.getElementById('btnUploadExcelUpdate');
+      var excelUpdateFileInput = document.getElementById('excelUpdateFileInput');
+      if (btnUploadExcelUpdate && excelUpdateFileInput) {
+        btnUploadExcelUpdate.addEventListener('click', function () {
+          if (!isReviewEditable()) return;
+          excelUpdateFileInput.value = '';
+          excelUpdateFileInput.click();
+        });
+        excelUpdateFileInput.addEventListener('change', function () {
+          var file = excelUpdateFileInput.files && excelUpdateFileInput.files[0];
+          if (!file) return;
+          startExcelUpload(file.name);
+        });
       }
 
       if (orderUpdateModal) {
@@ -2941,14 +3075,6 @@
       if (btnGenerateAi) {
         btnGenerateAi.addEventListener('click', generateAiReview);
       }
-      var btnRetryUpdate = document.getElementById('btnRetryUpdate');
-      if (btnRetryUpdate) {
-        btnRetryUpdate.addEventListener('click', retryOrderUpdate);
-      }
-      var btnGenerateExcel = document.getElementById('btnGenerateExcel');
-      if (btnGenerateExcel) {
-        btnGenerateExcel.addEventListener('click', generateExcelAgain);
-      }
       var btnResubmit = document.getElementById('btnResubmit');
       if (btnResubmit) {
         btnResubmit.addEventListener('click', resubmitBoth);
@@ -2968,8 +3094,6 @@
           var action = actionBtn.getAttribute('data-plm-page-action');
           if (action === 'download') downloadOrderUpdateExcel();
           if (action === 'generate') generateAiReview();
-          if (action === 'retry') retryOrderUpdate();
-          if (action === 'gen-excel') generateExcelAgain();
           if (action === 'resubmit') resubmitBoth();
         });
       }
@@ -2979,6 +3103,8 @@
         if (saved && saved.phase && saved.phase !== 'idle') {
           plm.outcome = saved.outcome || 'both-ok';
           plm.excelReady = !!saved.excelReady;
+          plm.updateSource = saved.updateSource === 'excel' ? 'excel' : 'html';
+          plm.uploadedFileName = saved.uploadedFileName || '';
           refreshOrderUpdatePreview();
           if (saved.phase === 'revisit' || saved.closed) {
             if (saved.phase === 'submitting' || saved.phase === 'confirming' || saved.phase === 'submitted' || saved.phase === 'revisit') {
