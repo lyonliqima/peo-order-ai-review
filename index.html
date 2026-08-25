@@ -768,8 +768,7 @@
     body.plm-excel-update .v2-legend,
     body.plm-excel-update #btnToggleOptionalColumns,
     body.plm-excel-update #bookingGridTableWalmart,
-    body.plm-excel-update .v2-walmart-legend,
-    body.plm-excel-update .walmart-forecast-banner {
+    body.plm-excel-update .v2-walmart-legend {
       display: none !important;
     }
     body.plm-grid-readonly .booking-grid .cell-stack {
@@ -923,10 +922,11 @@
       border-radius: 4px;
       background: #fff;
     }
-    .v2-walmart-legend__section + .v2-walmart-legend__section {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #eef0f4;
+    .v2-walmart-legend.maisa-collapse-card .maisa-collapse-toggle {
+      width: 100%;
+    }
+    .v2-walmart-legend.maisa-collapse-card.is-collapsed {
+      padding-bottom: 12px;
     }
     .v2-legend--inline {
       display: grid;
@@ -935,7 +935,6 @@
       font-size: 11px;
       color: #474747;
     }
-    .walmart-forecast-banner { margin-bottom: 12px; }
     .booking-grid-walmart {
       width: 100%;
       min-width: max-content;
@@ -1754,23 +1753,13 @@
                   Walmart mandatory grid · V2
                 </span>
               </div>
-              <div class="qima-block-banner qima-block-banner--warning walmart-forecast-banner" role="status">
-                <span class="qima-block-banner__message">Booking forecast was used on <strong>48</strong> field comparison(s) (PO / item / UPC). <strong>13</strong> of those need review — see the diff Excel.</span>
-              </div>
               <p class="plm-excel-grid-note">No HTML change table — this order was updated from an uploaded Excel file.</p>
-              <div class="v2-walmart-legend" aria-label="Walmart diff legend">
-                <div class="v2-walmart-legend__section">
-                  <div class="v2-legend__title">Cell colours — supplier vs PL/LP AI</div>
-                  <div class="v2-legend v2-legend--inline">
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Conflict (black supplier + blue AI)</span></div>
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#eef3ff"></span><span><strong>Light blue</strong> — AI only</span></div>
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#f3f4f6"></span><span><strong>Grey</strong> — Supplier only</span></div>
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fffbeb"></span><span><strong>Yellow</strong> — Default applied</span></div>
-                    <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#ffedd5"></span><span><strong>Orange</strong> — Mandatory empty</span></div>
-                  </div>
-                </div>
-                <div class="v2-walmart-legend__section">
-                  <div class="v2-legend__title">Walmart — with booking forecast (PO / item # / UPC)</div>
+              <div class="v2-walmart-legend maisa-collapse-card is-collapsed" aria-label="Walmart diff legend">
+                <button type="button" class="maisa-collapse-toggle" aria-expanded="false">
+                  <span class="v2-legend__title">Walmart — with booking forecast (PO / item # / UPC)</span>
+                  <span class="maisa-collapse-caret" aria-hidden="true"></span>
+                </button>
+                <div class="maisa-collapse-body">
                   <div class="v2-legend v2-legend--inline">
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fdefef"></span><span><strong>Red / pink</strong> — Any conflict (black + blue + green)</span></div>
                     <div class="v2-legend__item"><span class="v2-legend__swatch" style="background:#fde9d9"></span><span><strong>Caramel</strong> — Missing AI, supplier + forecast agree</span></div>
